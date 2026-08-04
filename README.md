@@ -93,6 +93,23 @@ npx remotion render src/index.tsx LiquidGlassTrailer out/liquid-glass-trailer.mp
 
 Output: `trailer/out/liquid-glass-trailer.mp4`
 
+
+## Local layout (this machine)
+
+Single source of truth is **this OSS checkout**:
+
+| Consumer | Points at |
+|----------|-----------|
+| Hermes live plugin | `~/.hermes/desktop-plugins/liquid-glass-wal` → `./plugin` |
+| `.files` package | `~/.files/config/hermes-liquid-glass` → this repo |
+| Theme data (generated) | `~/.hermes/liquid-glass-wal/theme.json` + `~/.cache/wal/…` |
+
+Re-link after clone:
+
+```bash
+./scripts/sync-layout.sh
+```
+
 ## License
 
 MIT — see [LICENSE](./LICENSE)
