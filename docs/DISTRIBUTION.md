@@ -4,7 +4,7 @@ How people get **hermes-liquid-glass** today — and what “store” means.
 
 ## Reality check
 
-Hermes Desktop has **no central plugin store**.
+There is **no Hermes Desktop plugin marketplace** / central plugin store yet.
 
 | Channel | Status |
 |---------|--------|
