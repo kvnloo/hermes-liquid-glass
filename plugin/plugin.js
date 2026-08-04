@@ -4,6 +4,9 @@
  * Polls pywal-built theme JSON and installs/activates `liquid-glass-wal`
  * with glass mix knobs. Wired from .files apply-pywal-theme.sh.
  *
+ * IMPORTANT: never location.reload() on the poll path — that caused a 2.5–5s
+ * full-window flash. Wallpaper changes apply live via CSS seeds + localStorage.
+ *
  * Theme files (first hit wins):
  *   ~/.hermes/liquid-glass-wal/theme.json
  *   ~/.cache/wal/hermes-liquid-glass-theme.json
@@ -20,8 +23,9 @@ const PROFILE_SKINS_KEY = 'hermes-desktop-profile-themes-v1'
 const PROFILE_MODES_KEY = 'hermes-desktop-profile-modes-v1'
 const GLASS_KNOBS_KEY = 'hermes-desktop-glass-knobs-v1'
 const AUTO_KEY = 'hermes.liquid-glass-wal.auto'
-const LAST_MTIME_KEY = 'hermes.liquid-glass-wal.lastMtime'
+const LAST_HASH_KEY = 'hermes.liquid-glass-wal.lastHash'
 const PATH_CACHE_KEY = 'hermes.liquid-glass-wal.themePath'
+const POLL_MS = 4000
 
 function readAuto() {
   try {
@@ -45,14 +49,12 @@ function guessHomes() {
   try {
     const cached = localStorage.getItem(PATH_CACHE_KEY)
     if (cached && cached.includes('/')) {
-      // .../liquid-glass-wal/theme.json or .../wal/hermes-liquid-glass-theme.json
       const m = cached.match(/^(.*)\/(?:\.hermes|\.cache)\//)
       if (m) homes.push(m[1])
     }
   } catch {
     /* ignore */
   }
-  // Fallback: this machine's user (dotfiles owner). apply.sh also mirrors under ~/.hermes.
   homes.push('/home/kvn')
   return [...new Set(homes)]
 }
@@ -74,22 +76,36 @@ function themeCandidates() {
   return [...new Set(out)]
 }
 
+function themeHash(theme) {
+  try {
+    const c = theme?.colors || {}
+    const g = theme?.hermesGlass || {}
+    const w = theme?.hermesWal || {}
+    return [
+      c.background,
+      c.foreground,
+      c.primary,
+      c.sidebarBackground,
+      c.card,
+      g.chrome,
+      g.card,
+      w.wallpaper,
+      w.builtAt
+    ].join('|')
+  } catch {
+    return String(Math.random())
+  }
+}
+
 function applyGlassKnobs(knobs) {
   if (typeof document === 'undefined' || !knobs) return
   const root = document.documentElement
-  const run = () => {
-    if (knobs.chrome) root.style.setProperty('--theme-mix-chrome', knobs.chrome)
-    if (knobs.sidebar) root.style.setProperty('--theme-mix-sidebar', knobs.sidebar)
-    if (knobs.card) root.style.setProperty('--theme-mix-card', knobs.card)
-    if (knobs.elevated) root.style.setProperty('--theme-mix-elevated', knobs.elevated)
-    if (knobs.bubble) root.style.setProperty('--theme-mix-bubble', knobs.bubble)
-    root.style.setProperty('--dt-input-bg', '0%')
-    root.style.setProperty('--noise-opacity-mul', 'calc(0.015 / 0.21)')
-  }
-  run()
-  setTimeout(run, 80)
-  setTimeout(run, 300)
-  setTimeout(run, 900)
+  if (knobs.chrome) root.style.setProperty('--theme-mix-chrome', knobs.chrome)
+  if (knobs.sidebar) root.style.setProperty('--theme-mix-sidebar', knobs.sidebar)
+  if (knobs.card) root.style.setProperty('--theme-mix-card', knobs.card)
+  if (knobs.elevated) root.style.setProperty('--theme-mix-elevated', knobs.elevated)
+  if (knobs.bubble) root.style.setProperty('--theme-mix-bubble', knobs.bubble)
+  root.style.setProperty('--dt-input-bg', '0%')
 }
 
 function stripPluginFields(theme) {
@@ -103,6 +119,41 @@ function textFromRead(res) {
   if (typeof res === 'string') return res
   if (!res || typeof res !== 'object') return null
   return res.content || res.text || res.data || null
+}
+
+/** Live-paint seeds so ThemeProvider does not need a full reload. */
+function paintSeeds(theme) {
+  try {
+    const c = theme.colors || {}
+    const root = document.documentElement
+    const mode = theme.hermesWal?.isDark === false ? 'light' : 'dark'
+    if (c.background) root.style.setProperty('--theme-background-seed', c.background)
+    if (c.foreground) root.style.setProperty('--theme-foreground', c.foreground)
+    if (c.primary) {
+      root.style.setProperty('--theme-primary', c.primary)
+      root.style.setProperty('--theme-midground', c.midground || c.primary)
+      root.style.setProperty('--theme-secondary', c.secondary || c.primary)
+      root.style.setProperty('--theme-accent-soft', c.accent || c.primary)
+    }
+    if (c.sidebarBackground) root.style.setProperty('--theme-sidebar-seed', c.sidebarBackground)
+    if (c.card) root.style.setProperty('--theme-card-seed', c.card)
+    if (c.popover) root.style.setProperty('--theme-elevated-seed', c.popover)
+    if (c.userBubble) root.style.setProperty('--theme-bubble-seed', c.userBubble)
+    if (c.border) root.style.setProperty('--dt-border', c.border)
+    if (c.ring) root.style.setProperty('--dt-ring', c.ring)
+    root.classList.toggle('dark', mode === 'dark')
+    root.dataset.hermesTheme = THEME_NAME
+    root.dataset.hermesMode = mode
+    root.style.setProperty('color-scheme', mode)
+    applyGlassKnobs(theme.hermesGlass)
+    window.hermesDesktop?.setTitleBarTheme?.({
+      background: c.background,
+      foreground: c.foreground
+    })
+    window.hermesDesktop?.setNativeTheme?.(mode)
+  } catch {
+    /* ignore */
+  }
 }
 
 function installTheme(theme, { activate }) {
@@ -138,31 +189,7 @@ function installTheme(theme, { activate }) {
     } catch {
       /* ignore */
     }
-
-    try {
-      const c = clean.colors || {}
-      const root = document.documentElement
-      if (c.background) root.style.setProperty('--theme-background-seed', c.background)
-      if (c.foreground) root.style.setProperty('--theme-foreground', c.foreground)
-      if (c.primary) {
-        root.style.setProperty('--theme-primary', c.primary)
-        root.style.setProperty('--theme-midground', c.midground || c.primary)
-      }
-      if (c.sidebarBackground) root.style.setProperty('--theme-sidebar-seed', c.sidebarBackground)
-      if (c.card) root.style.setProperty('--theme-card-seed', c.card)
-      if (c.popover) root.style.setProperty('--theme-elevated-seed', c.popover)
-      if (c.userBubble) root.style.setProperty('--theme-bubble-seed', c.userBubble)
-      root.classList.toggle('dark', mode === 'dark')
-      root.dataset.hermesTheme = THEME_NAME
-      applyGlassKnobs(theme.hermesGlass)
-      window.hermesDesktop?.setTitleBarTheme?.({
-        background: c.background,
-        foreground: c.foreground
-      })
-      window.hermesDesktop?.setNativeTheme?.(mode)
-    } catch {
-      /* ignore */
-    }
+    paintSeeds(theme)
   }
 
   return clean
@@ -183,7 +210,7 @@ async function readThemeFile() {
       } catch {
         /* ignore */
       }
-      return { path, theme }
+      return { path, theme, hash: themeHash(theme) }
     } catch {
       /* try next */
     }
@@ -198,6 +225,7 @@ export default {
   defaultEnabled: true,
   register(ctx) {
     let disposeTheme = () => {}
+    let lastPublishedHash = ''
     let contributed = {
       name: THEME_NAME,
       label: 'Liquid Glass (pywal)',
@@ -226,7 +254,8 @@ export default {
       }
     }
 
-    const publishTheme = theme => {
+    const publishTheme = (theme, hash) => {
+      if (hash && hash === lastPublishedHash) return
       if (theme?.colors) {
         contributed = {
           ...stripPluginFields(theme),
@@ -243,9 +272,10 @@ export default {
           data: contributed
         })
       }
+      if (hash) lastPublishedHash = hash
     }
 
-    publishTheme(contributed)
+    publishTheme(contributed, 'seed')
 
     ctx.register({
       id: `${ID}:sync`,
@@ -264,15 +294,15 @@ export default {
             })
             return
           }
-          publishTheme(got.theme)
+          publishTheme(got.theme, got.hash)
           installTheme(got.theme, { activate: true })
-          const mtime = got.theme?.hermesWal?.builtAt || Date.now() / 1000
-          localStorage.setItem(LAST_MTIME_KEY, String(mtime))
+          localStorage.setItem(LAST_HASH_KEY, got.hash)
           host.toast?.({
             title: 'Liquid Glass',
             message: `Synced · ${got.theme?.hermesWal?.accent || 'ok'}`,
             tone: 'success'
           })
+          // Manual sync only: one reload so ThemeProvider fully re-reads registry.
           location.reload()
         }
       }
@@ -297,38 +327,49 @@ export default {
     })
 
     let stopped = false
+    let lastAppliedHash = ''
+    try {
+      lastAppliedHash = localStorage.getItem(LAST_HASH_KEY) || ''
+    } catch {
+      /* ignore */
+    }
+
     const tick = async () => {
       if (stopped) return
       try {
         const got = await readThemeFile()
         if (!got?.theme) return
-        publishTheme(got.theme)
-        if (!readAuto()) {
-          if (localStorage.getItem(SKIN_KEY) === THEME_NAME) applyGlassKnobs(got.theme.hermesGlass)
+
+        // Only touch the contribution registry when the file actually changed.
+        if (got.hash !== lastPublishedHash) {
+          publishTheme(got.theme, got.hash)
+        }
+
+        if (!readAuto()) return
+
+        if (got.hash !== lastAppliedHash) {
+          installTheme(got.theme, { activate: true })
+          lastAppliedHash = got.hash
+          try {
+            localStorage.setItem(LAST_HASH_KEY, got.hash)
+          } catch {
+            /* ignore */
+          }
+          // No location.reload() — live paintSeeds is enough and avoids flash.
           return
         }
-        const mtime = Number(got.theme?.hermesWal?.builtAt || 0)
-        const last = Number(localStorage.getItem(LAST_MTIME_KEY) || 0)
-        if (mtime && mtime > last) {
-          installTheme(got.theme, { activate: true })
-          localStorage.setItem(LAST_MTIME_KEY, String(mtime))
-          const mark = `hermes.liquid-glass-wal.reloaded.${mtime}`
-          if (!sessionStorage.getItem(mark)) {
-            sessionStorage.setItem(mark, '1')
-            location.reload()
-          }
-        } else if (localStorage.getItem(SKIN_KEY) === THEME_NAME) {
-          applyGlassKnobs(got.theme.hermesGlass)
-        }
+
+        // Stable theme: do nothing. Re-applying knobs every poll caused flicker.
       } catch (err) {
         console.warn('[liquid-glass-wal]', err)
       }
     }
 
     tick()
-    const interval = setInterval(tick, 2500)
+    const interval = setInterval(tick, POLL_MS)
 
-    const bootKnobs = () => {
+    // One-shot knob apply after mount (ThemeProvider may overwrite seeds once).
+    const boot = () => {
       try {
         if (localStorage.getItem(SKIN_KEY) !== THEME_NAME) return
         applyGlassKnobs(JSON.parse(localStorage.getItem(GLASS_KNOBS_KEY) || 'null'))
@@ -336,9 +377,7 @@ export default {
         /* ignore */
       }
     }
-    bootKnobs()
-    setTimeout(bootKnobs, 200)
-    setTimeout(bootKnobs, 1000)
+    setTimeout(boot, 300)
 
     return () => {
       stopped = true
