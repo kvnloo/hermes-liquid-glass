@@ -31,6 +31,8 @@ Override with `HERMES_LIQUID_GLASS_HOME=/somewhere`.
 | Apply hook | `scripts/apply.sh` |
 | End-user installer | `scripts/install.sh` |
 | Desktop runtime plugin | `plugin/plugin.js` |
+| Unified-package entrypoint | `desktop/plugin.js` (symlink to the runtime plugin) |
+| Hermes CLI manifest | `plugin.yaml` + inert `__init__.py` |
 | Hyprland opacity fragment | `hypr/liquid-glass.conf` |
 | Trailer (Remotion) | `trailer/` |
 
@@ -93,12 +95,16 @@ If you use [kvnloo/.files](https://github.com/kvnloo/.files), this is already ho
 
 ## Distribution / “store”
 
-There is **no** Hermes Desktop plugin marketplace yet.  
-Canonical delivery is **git + disk door** (`$HERMES_HOME/desktop-plugins/`).
+There is **no** Hermes Desktop marketplace selector yet. Canonical standalone
+delivery remains **git + disk door** (`$HERMES_HOME/desktop-plugins/`). The repo
+also follows Hermes' unified package layout (`plugin.yaml`, `__init__.py`, and
+`desktop/plugin.js`) so a SHA-pinned community-index install can inventory the
+same Desktop plugin without adding an active Python capability.
 
 See [docs/DISTRIBUTION.md](./docs/DISTRIBUTION.md) and [docs/COMMUNITY.md](./docs/COMMUNITY.md) (Discord pitch).
 
-`hermes plugins install` and VS Code Marketplace themes are **different** systems.
+The community index is a CLI discovery/install surface, not a Desktop-native
+marketplace. VS Code Marketplace themes are a different system.
 
 ## Contributing
 
