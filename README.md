@@ -10,11 +10,26 @@ When the wallpaper changes, Desktop accent/chrome follow automatically.
 
 ## Preview
 
-[![Hermes Liquid Glass preview](./media/preview-poster.png)](./media/preview.mp4)
+### Horizontal setup
 
-Actual Hermes Desktop capture with an original procedural wallpaper and a
-local deterministic `DEMO DATA` stream. No external model, private session,
-or account data is used. See [preview provenance](./docs/PREVIEW_PROVENANCE.md).
+[![Hermes Liquid Glass horizontal preview](./media/preview-poster.png)](./media/preview.mp4)
+
+Native 1920x1080 capture on DP-1 with the configured Wallpaper Engine item
+[Forgotten Ruins](https://steamcommunity.com/sharedfiles/filedetails/?id=2133182232)
+by Tiamat and Historyk.
+
+### Vertical setup
+
+[![Hermes Liquid Glass vertical preview](./media/preview-vertical-poster.png)](./media/preview-vertical.mp4)
+
+Native portrait 1080x1920 compositor capture on DP-2 with the configured
+Wallpaper Engine item [Abstract Landscape](https://steamcommunity.com/sharedfiles/filedetails/?id=1888636115)
+by [Ark](https://steamcommunity.com/profiles/76561198095821837).
+
+Both previews capture actual Hermes Desktop and `linux-wallpaperengine` in the
+same Wayland compositor path. They use a local deterministic `DEMO DATA`
+stream. No external model, private session, or account data is used. Theme by
+[kvnloo](https://github.com/kvnloo). See [preview provenance](./docs/PREVIEW_PROVENANCE.md).
 
 ## Quick install
 
