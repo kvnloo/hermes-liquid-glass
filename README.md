@@ -8,6 +8,14 @@ When the wallpaper changes, Desktop accent/chrome follow automatically.
 
 > Trailer uses a **synthetic preview chat only** — no real sessions, paths, or personal content.
 
+## Preview
+
+[![Hermes Liquid Glass preview](./media/preview-poster.png)](./media/preview.mp4)
+
+Actual Hermes Desktop capture with an original procedural wallpaper and a
+local deterministic `DEMO DATA` stream. No external model, private session,
+or account data is used. See [preview provenance](./docs/PREVIEW_PROVENANCE.md).
+
 ## Quick install
 
 ```bash
