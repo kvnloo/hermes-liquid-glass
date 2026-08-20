@@ -22,9 +22,11 @@ const MODE_KEY = 'hermes-desktop-mode-v1'
 const PROFILE_SKINS_KEY = 'hermes-desktop-profile-themes-v1'
 const PROFILE_MODES_KEY = 'hermes-desktop-profile-modes-v1'
 const GLASS_KNOBS_KEY = 'hermes-desktop-glass-knobs-v1'
+const WAL_META_KEY = 'hermes.liquid-glass-wal.metadata'
 const AUTO_KEY = 'hermes.liquid-glass-wal.auto'
 const LAST_HASH_KEY = 'hermes.liquid-glass-wal.lastHash'
 const PATH_CACHE_KEY = 'hermes.liquid-glass-wal.themePath'
+const EXPECTED_WALLPAPER_KEY = 'hermes.liquid-glass-wal.expectedWallpaper'
 const POLL_MS = 4000
 
 function readAuto() {
@@ -110,6 +112,15 @@ function colorsForMode(theme, mode) {
     : (theme.colors || theme.darkColors || {})
 }
 
+function assertExpectedWallpaper(theme) {
+  const expected = localStorage.getItem(EXPECTED_WALLPAPER_KEY)
+  if (!expected) return
+  const actual = theme?.hermesWal?.wallpaper || ''
+  if (!actual.endsWith(expected)) {
+    throw new Error(`liquid-glass theme identity mismatch: expected ${expected}, got ${actual || '<none>'}`)
+  }
+}
+
 function stripPluginFields(theme) {
   const next = { ...theme }
   delete next.hermesGlass
@@ -160,6 +171,7 @@ function paintSeeds(theme) {
 }
 
 function installTheme(theme, { activate }) {
+  assertExpectedWallpaper(theme)
   const clean = stripPluginFields(theme)
   clean.name = THEME_NAME
   if (!clean.label) clean.label = 'Liquid Glass (pywal)'
@@ -180,6 +192,9 @@ function installTheme(theme, { activate }) {
   if (theme.hermesGlassByMode) {
     localStorage.setItem(`${GLASS_KNOBS_KEY}:by-mode`, JSON.stringify(theme.hermesGlassByMode))
   }
+  if (theme.hermesWal) {
+    localStorage.setItem(WAL_META_KEY, JSON.stringify(theme.hermesWal))
+  }
 
   if (activate) {
     localStorage.setItem(SKIN_KEY, THEME_NAME)
@@ -199,6 +214,20 @@ function installTheme(theme, { activate }) {
   }
 
   return clean
+}
+
+function hydrateStoredTheme() {
+  if (localStorage.getItem(SKIN_KEY) !== THEME_NAME) return false
+  const store = JSON.parse(localStorage.getItem(USER_THEMES_KEY) || '{}') || {}
+  const theme = store[THEME_NAME]
+  const knobs = JSON.parse(localStorage.getItem(GLASS_KNOBS_KEY) || 'null')
+  const knobsByMode = JSON.parse(localStorage.getItem(`${GLASS_KNOBS_KEY}:by-mode`) || 'null')
+  const wal = JSON.parse(localStorage.getItem(WAL_META_KEY) || 'null')
+  if (!theme?.colors) return false
+  const restored = { ...theme, hermesGlass: knobs, hermesGlassByMode: knobsByMode, hermesWal: wal }
+  assertExpectedWallpaper(restored)
+  paintSeeds(restored)
+  return true
 }
 
 async function readThemeFile() {
@@ -380,13 +409,7 @@ export default {
     // the default light canvas until the wallpaper poll changes again.
     const boot = () => {
       try {
-        if (localStorage.getItem(SKIN_KEY) !== THEME_NAME) return
-        const store = JSON.parse(localStorage.getItem(USER_THEMES_KEY) || '{}') || {}
-        const theme = store[THEME_NAME]
-        const knobs = JSON.parse(localStorage.getItem(GLASS_KNOBS_KEY) || 'null')
-        const knobsByMode = JSON.parse(localStorage.getItem(`${GLASS_KNOBS_KEY}:by-mode`) || 'null')
-        if (theme?.colors) paintSeeds({ ...theme, hermesGlass: knobs, hermesGlassByMode: knobsByMode })
-        else applyGlassKnobs(knobs)
+        hydrateStoredTheme()
       } catch {
         /* ignore */
       }

@@ -1,5 +1,7 @@
 import importlib.util
 import json
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -25,6 +27,17 @@ class ThemeBuildTests(unittest.TestCase):
             },
         }
 
+    def run_runtime(self, theme, command, mode="light", expected=""):
+        with tempfile.NamedTemporaryFile("w", suffix=".json") as handle:
+            json.dump(theme, handle)
+            handle.flush()
+            result = subprocess.run(
+                ["node", str(Path(__file__).parent / "plugin_runtime_harness.mjs"),
+                 handle.name, command, mode, expected],
+                text=True, capture_output=True,
+            )
+        return result, json.loads(result.stdout)
+
     def test_dark_palette_is_unchanged_and_light_is_distinct(self):
         theme = build_theme.build_theme(self.palette)
         self.assertEqual(theme["darkColors"]["background"], "#181f23")
@@ -41,11 +54,41 @@ class ThemeBuildTests(unittest.TestCase):
         self.assertEqual(set(theme["hermesGlassByMode"]["light"]), expected)
         self.assertNotEqual(theme["hermesGlassByMode"]["dark"], theme["hermesGlassByMode"]["light"])
 
-    def test_clouds_scheme_identity_survives(self):
+    def test_light_seed_mutation_control_and_wallpaper_runtime_differ(self):
+        theme = build_theme.build_theme(self.palette)
+        _, control = self.run_runtime(theme, "control")
+        result, painted = self.run_runtime(theme, "install")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(control["styles"]["--theme-background-seed"], "#ffffff")
+        self.assertEqual(control["styles"]["--theme-primary"], "#3b82f6")
+        self.assertNotEqual(control["styles"], painted["styles"])
+        self.assertEqual(painted["theme"], "liquid-glass-wal")
+
+    def test_wrong_vertical_theme_identity_fails_closed(self):
         clouds = json.loads((Path(__file__).parent / "fixtures/clouds-pywal.json").read_text())
         theme = build_theme.build_theme(clouds)
-        self.assertIn("mountain-peak-clouds.jpg", theme["hermesWal"]["wallpaper"])
-        self.assertNotEqual(theme["colors"], theme["darkColors"])
+        result, payload = self.run_runtime(theme, "install", expected="forgotten-ruins.png")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(payload["ok"])
+        self.assertIn("identity mismatch", payload["error"])
+
+    def test_clouds_vertical_identity_and_hydration_preserve_light_mode(self):
+        clouds = json.loads((Path(__file__).parent / "fixtures/clouds-pywal.json").read_text())
+        theme = build_theme.build_theme(clouds)
+        result, payload = self.run_runtime(theme, "hydrate", "light", "mountain-peak-clouds.jpg")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(payload["mode"], "light")
+        self.assertEqual(payload["theme"], "liquid-glass-wal")
+        self.assertEqual(payload["styles"]["--theme-background-seed"], theme["colors"]["background"])
+        self.assertNotEqual(payload["styles"]["--theme-primary"], "#3b82f6")
+
+    def test_forgotten_dark_runtime_is_unchanged_after_hydration(self):
+        theme = build_theme.build_theme(self.palette)
+        result, payload = self.run_runtime(theme, "hydrate", "dark", "forgotten-ruins.png")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(payload["mode"], "dark")
+        self.assertEqual(payload["styles"]["--theme-background-seed"], "#181f23")
+        self.assertEqual(payload["styles"]["--theme-foreground"], "#d1deda")
 
 
 if __name__ == "__main__":
