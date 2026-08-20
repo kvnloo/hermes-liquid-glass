@@ -5,6 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from PIL import Image
+
 MODULE_PATH = Path(__file__).parents[1] / "scripts" / "build_theme.py"
 spec = importlib.util.spec_from_file_location("build_theme", MODULE_PATH)
 assert spec is not None and spec.loader is not None
@@ -27,13 +29,13 @@ class ThemeBuildTests(unittest.TestCase):
             },
         }
 
-    def run_runtime(self, theme, command, mode="light", expected=""):
+    def run_runtime(self, theme, command, mode="light", expected="", seeds=True):
         with tempfile.NamedTemporaryFile("w", suffix=".json") as handle:
             json.dump(theme, handle)
             handle.flush()
             result = subprocess.run(
                 ["node", str(Path(__file__).parent / "plugin_runtime_harness.mjs"),
-                 handle.name, command, mode, expected],
+                 handle.name, command, mode, expected, "1" if seeds else "0"],
                 text=True, capture_output=True,
             )
         return result, json.loads(result.stdout)
@@ -56,13 +58,26 @@ class ThemeBuildTests(unittest.TestCase):
 
     def test_light_seed_mutation_control_and_wallpaper_runtime_differ(self):
         theme = build_theme.build_theme(self.palette)
-        _, control = self.run_runtime(theme, "control")
+        _, control = self.run_runtime(theme, "control", seeds=False)
         result, painted = self.run_runtime(theme, "install")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(control["styles"]["--theme-background-seed"], "#ffffff")
         self.assertEqual(control["styles"]["--theme-primary"], "#3b82f6")
         self.assertNotEqual(control["styles"], painted["styles"])
         self.assertEqual(painted["theme"], "liquid-glass-wal")
+        with tempfile.TemporaryDirectory() as directory:
+            control_path = Path(directory) / "builtin-control.png"
+            painted_path = Path(directory) / "wallpaper-light.png"
+            for payload, path in ((control, control_path), (painted, painted_path)):
+                bg = payload["styles"]["--theme-background-seed"]
+                accent = payload["styles"]["--theme-primary"]
+                image = Image.new("RGB", (64, 64), bg)
+                for x in range(32, 64):
+                    for y in range(64):
+                        image.putpixel((x, y), tuple(bytes.fromhex(accent[1:])))
+                image.save(path, format="PNG", compress_level=1)
+            self.assertNotEqual(control_path.read_bytes(), painted_path.read_bytes())
+            self.assertNotEqual(Image.open(control_path).getpixel((0, 0)), Image.open(painted_path).getpixel((0, 0)))
 
     def test_wrong_vertical_theme_identity_fails_closed(self):
         clouds = json.loads((Path(__file__).parent / "fixtures/clouds-pywal.json").read_text())
@@ -81,6 +96,18 @@ class ThemeBuildTests(unittest.TestCase):
         self.assertEqual(payload["theme"], "liquid-glass-wal")
         self.assertEqual(payload["styles"]["--theme-background-seed"], theme["colors"]["background"])
         self.assertNotEqual(payload["styles"]["--theme-primary"], "#3b82f6")
+
+    def test_vertical_recording_profile_is_bound_to_clouds_and_wrong_id_fails(self):
+        profile_path = Path(__file__).parents[1] / "recording-profiles/clouds-vertical.json"
+        profile = json.loads(profile_path.read_text())
+        self.assertEqual(profile["expectedWallpaper"], "mountain-peak-clouds.jpg")
+        clouds = json.loads((Path(__file__).parent / "fixtures/clouds-pywal.json").read_text())
+        theme = build_theme.build_theme(clouds)
+        ok_result, _ = self.run_runtime(theme, "hydrate", profile["mode"], profile["expectedWallpaper"])
+        self.assertEqual(ok_result.returncode, 0)
+        bad_result, bad = self.run_runtime(theme, "hydrate", profile["mode"], "forgotten-ruins.png")
+        self.assertNotEqual(bad_result.returncode, 0)
+        self.assertIn("identity mismatch", bad["error"])
 
     def test_forgotten_dark_runtime_is_unchanged_after_hydration(self):
         theme = build_theme.build_theme(self.palette)

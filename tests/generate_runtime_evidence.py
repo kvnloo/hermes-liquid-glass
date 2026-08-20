@@ -1,11 +1,16 @@
 import importlib.util
+import hashlib
 import json
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import cast
+
+from PIL import Image
 
 REPO = Path(__file__).parents[1]
 OUTPUT = REPO.parent / "task-t_26a896f4/proofs/computed-styles.json"
+PROOFS = OUTPUT.parent
 spec = importlib.util.spec_from_file_location("build_theme", REPO / "scripts/build_theme.py")
 assert spec is not None and spec.loader is not None
 build_theme = importlib.util.module_from_spec(spec)
@@ -25,18 +30,19 @@ FORGOTTEN = {
 CLOUDS = json.loads((REPO / "tests/fixtures/clouds-pywal.json").read_text())
 
 
-def runtime(theme, command, mode, expected=""):
+def runtime(theme, command, mode, expected="", seeds=True):
     with tempfile.NamedTemporaryFile("w", suffix=".json") as handle:
         json.dump(theme, handle)
         handle.flush()
         result = subprocess.run(
             ["node", str(REPO / "tests/plugin_runtime_harness.mjs"), handle.name,
-             command, mode, expected], check=True, capture_output=True, text=True)
+             command, mode, expected, "1" if seeds else "0"], check=True, capture_output=True, text=True)
     return json.loads(result.stdout)
 
 
 def state(identity, palette, mode, expected):
     theme = build_theme.build_theme(palette)
+    theme["hermesWal"].pop("builtAt", None)
     result = runtime(theme, "hydrate", mode, expected)
     colors = theme["darkColors"] if mode == "dark" else theme["colors"]
     glass = theme["hermesGlassByMode"][mode]
@@ -57,8 +63,37 @@ def state(identity, palette, mode, expected):
     }
 
 
+def render_seed_proof(payload, name):
+    """Render deterministic pixels from variables painted by the plugin path."""
+    styles = payload["styles"]
+    background = styles["--theme-background-seed"]
+    accent = styles["--theme-primary"]
+    path = PROOFS / name
+    image = Image.new("RGB", (256, 144), background)
+    accent_rgb = tuple(bytes.fromhex(accent[1:]))
+    for x in range(128, 256):
+        for y in range(144):
+            image.putpixel((x, y), accent_rgb)
+    image.save(path, format="PNG", compress_level=1)
+    return {
+        "path": str(path),
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "backgroundPixel": list(cast(tuple[int, int, int], image.getpixel((0, 0)))),
+        "accentPixel": list(cast(tuple[int, int, int], image.getpixel((255, 0)))),
+    }
+
+
 def main():
     forgotten_theme = build_theme.build_theme(FORGOTTEN)
+    forgotten_theme["hermesWal"].pop("builtAt", None)
+    builtin = runtime(forgotten_theme, "control", "light", "", seeds=False)
+    wallpaper = runtime(forgotten_theme, "hydrate", "light", "forgotten-ruins.png")
+    pixel_evidence = {
+        "builtinControl": render_seed_proof(builtin, "builtin-control-computed.png"),
+        "wallpaperLight": render_seed_proof(wallpaper, "forgotten-light-computed.png"),
+    }
+    if pixel_evidence["builtinControl"]["sha256"] == pixel_evidence["wallpaperLight"]["sha256"]:
+        raise RuntimeError("wallpaper light mutation did not change computed pixels")
     evidence = {
         "schema": "liquid-glass-runtime-computed-styles-v2",
         "captureKind": "deterministic plugin hydration harness",
@@ -68,7 +103,8 @@ def main():
             state("dp2-clouds-dark", CLOUDS, "dark", "mountain-peak-clouds.jpg"),
             state("dp2-clouds-light", CLOUDS, "light", "mountain-peak-clouds.jpg"),
         ],
-        "builtinControl": runtime(forgotten_theme, "control", "light"),
+        "builtinControl": builtin,
+        "computedPixelEvidence": pixel_evidence,
         "notes": [
             "Values use the actual plugin installTheme -> persisted registry -> hydrateStoredTheme path.",
             "Blur is compositor/panel-runtime-owned; the plugin controls seeds and mix percentages.",

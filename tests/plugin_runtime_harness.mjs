@@ -5,7 +5,10 @@ const body = source.slice(0, source.indexOf('export default')).replace(/^import 
 
 function runtime() {
   const values = new Map()
-  const props = new Map()
+  const props = new Map([
+    ['--theme-background-seed', '#ffffff'],
+    ['--theme-primary', '#3b82f6']
+  ])
   const classes = new Set()
   globalThis.localStorage = {
     getItem: key => values.has(key) ? values.get(key) : null,
@@ -25,24 +28,23 @@ const theme = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
 const command = process.argv[3]
 const mode = process.argv[4] || 'light'
 const expected = process.argv[5] || ''
+const seedsEnabled = process.argv[6] !== '0'
 const r = runtime()
 if (expected) r.values.set('hermes.liquid-glass-wal.expectedWallpaper', expected)
+r.values.set('hermes.liquid-glass-wal.wallpaperSeeds', seedsEnabled ? '1' : '0')
 r.values.set('hermes-desktop-mode-v1', mode)
 
 try {
-  if (command === 'control') {
-    r.props.set('--theme-background-seed', '#ffffff')
-    r.props.set('--theme-primary', '#3b82f6')
-  } else {
-    r.api.installTheme(theme, { activate: true })
-    if (command === 'hydrate') {
+  r.api.installTheme(theme, { activate: true })
+  if (command === 'hydrate' || command === 'control') {
       // Simulate the operator's persisted mode choice after initial install.
       r.values.set('hermes-desktop-mode-v1', mode)
-      r.props.clear()
-      r.props.set('--theme-background-seed', '#ffffff')
-      r.props.set('--theme-primary', '#3b82f6')
+      if (command === 'hydrate') {
+        r.props.clear()
+        r.props.set('--theme-background-seed', '#ffffff')
+        r.props.set('--theme-primary', '#3b82f6')
+      }
       r.api.hydrateStoredTheme()
-    }
   }
   console.log(JSON.stringify({ ok: true, mode: r.root.dataset.hermesMode || mode,
     theme: r.root.dataset.hermesTheme || 'nous', styles: Object.fromEntries(r.props) }))

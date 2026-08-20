@@ -27,6 +27,7 @@ const AUTO_KEY = 'hermes.liquid-glass-wal.auto'
 const LAST_HASH_KEY = 'hermes.liquid-glass-wal.lastHash'
 const PATH_CACHE_KEY = 'hermes.liquid-glass-wal.themePath'
 const EXPECTED_WALLPAPER_KEY = 'hermes.liquid-glass-wal.expectedWallpaper'
+const WALLPAPER_SEEDS_KEY = 'hermes.liquid-glass-wal.wallpaperSeeds'
 const POLL_MS = 4000
 
 function readAuto() {
@@ -138,6 +139,10 @@ function textFromRead(res) {
 /** Live-paint seeds so ThemeProvider does not need a full reload. */
 function paintSeeds(theme) {
   try {
+    // Explicitly disabling wallpaper seeds is the mutation/control path. In
+    // production this leaves ThemeProvider's built-in theme variables intact.
+    // Missing means enabled for backwards compatibility.
+    if (localStorage.getItem(WALLPAPER_SEEDS_KEY) === '0') return false
     const mode = selectedMode(theme)
     const c = colorsForMode(theme, mode)
     const root = document.documentElement
@@ -165,8 +170,9 @@ function paintSeeds(theme) {
       foreground: c.foreground
     })
     window.hermesDesktop?.setNativeTheme?.(mode)
+    return true
   } catch {
-    /* ignore */
+    return false
   }
 }
 
