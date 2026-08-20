@@ -2,6 +2,7 @@
   "profileId": "liquid-glass-clouds-vertical",
   "monitor": "DP-2",
   "themeId": "liquid-glass-wal",
+  "noctaliaScheme": "LiquidGlass-Clouds",
   "expectedWallpaper": "mountain-peak-clouds.jpg",
   "mode": "dark"
 }
