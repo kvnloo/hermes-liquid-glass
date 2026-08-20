@@ -107,6 +107,30 @@ def readable_on(bg: str) -> str:
     return "#0c0c0e" if luminance(bg) > 0.55 else "#f4f6f8"
 
 
+def build_light_colors(dark: dict[str, str], accent: str) -> dict[str, str]:
+    """Lift the wallpaper palette into a restrained, readable daylight theme."""
+    paper = mix(mix(dark["foreground"], "#ffffff", 0.72), accent, 0.07)
+    ink = ensure_contrast(mix(dark["background"], "#08090a", 0.48), paper, 7.0)
+    muted_fg = ensure_contrast(mix(ink, paper, 0.38), paper, MIN_MUTED_CONTRAST)
+    daylight_accent = ensure_contrast(mix(accent, dark["background"], 0.34), paper, MIN_ACCENT_CONTRAST)
+    border = mix(paper, ink, 0.24)
+    return {
+        "background": paper, "foreground": ink,
+        "card": mix(paper, accent, 0.055), "cardForeground": ink,
+        "muted": mix(paper, accent, 0.08), "mutedForeground": muted_fg,
+        "popover": mix(paper, accent, 0.075), "popoverForeground": ink,
+        "primary": daylight_accent, "primaryForeground": readable_on(daylight_accent),
+        "secondary": mix(paper, accent, 0.13), "secondaryForeground": ink,
+        "accent": mix(paper, accent, 0.16), "accentForeground": ink,
+        "border": border, "input": mix(paper, accent, 0.035),
+        "ring": daylight_accent, "midground": daylight_accent, "composerRing": daylight_accent,
+        "destructive": ensure_contrast("#a9203d", paper, 4.5), "destructiveForeground": "#ffffff",
+        "sidebarBackground": mix(paper, accent, 0.045),
+        "sidebarBorder": mix(paper, ink, 0.19),
+        "userBubble": mix(paper, accent, 0.11), "userBubbleBorder": border,
+    }
+
+
 def build_theme(palette: dict) -> dict:
     special = palette["special"]
     colors = palette["colors"]
@@ -160,12 +184,12 @@ def build_theme(palette: dict) -> dict:
         "userBubbleBorder": border,
     }
 
-    # Single-mode palette mirrored so light/dark toggle stays faithful to wal.
+    light_colors = build_light_colors(colors_bag, accent)
     theme = {
         "name": THEME_NAME,
         "label": THEME_LABEL,
         "description": f"pywal liquid glass · {wallpaper or 'wallpaper'}",
-        "colors": colors_bag,
+        "colors": light_colors,
         "darkColors": dict(colors_bag),
         "typography": {
             "fontSans": '"Segoe WPC", "Segoe UI", -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif',
@@ -178,6 +202,10 @@ def build_theme(palette: dict) -> dict:
             "card": "14%" if is_dark else "18%",
             "elevated": "18%" if is_dark else "24%",
             "bubble": "16%" if is_dark else "12%",
+        },
+        "hermesGlassByMode": {
+            "dark": {"chrome": "48%", "sidebar": "62%", "card": "14%", "elevated": "18%", "bubble": "16%"},
+            "light": {"chrome": "76%", "sidebar": "86%", "card": "20%", "elevated": "26%", "bubble": "15%"},
         },
         "hermesWal": {
             "wallpaper": wallpaper,

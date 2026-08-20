@@ -1,0 +1,11 @@
+{
+  "wallpaper": "/home/kvn/workspace/UX/background/3440x1440/mountain-peak-clouds.jpg",
+  "alpha": "100",
+  "special": {"background": "#190b12", "foreground": "#c8dce8", "cursor": "#c8dce8"},
+  "colors": {
+    "color0": "#190b12", "color1": "#F19C62", "color2": "#41679F", "color3": "#957391",
+    "color4": "#57ACDA", "color5": "#EBB092", "color6": "#F7D3A7", "color7": "#c8dce8",
+    "color8": "#8c9aa2", "color9": "#F19C62", "color10": "#41679F", "color11": "#957391",
+    "color12": "#57ACDA", "color13": "#EBB092", "color14": "#F7D3A7", "color15": "#c8dce8"
+  }
+}

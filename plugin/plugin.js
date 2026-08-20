@@ -44,21 +44,6 @@ function setAuto(on) {
   }
 }
 
-function guessHomes() {
-  const homes = []
-  try {
-    const cached = localStorage.getItem(PATH_CACHE_KEY)
-    if (cached && cached.includes('/')) {
-      const m = cached.match(/^(.*)\/(?:\.hermes|\.cache)\//)
-      if (m) homes.push(m[1])
-    }
-  } catch {
-    /* ignore */
-  }
-  homes.push('/home/kvn')
-  return [...new Set(homes)]
-}
-
 function themeCandidates() {
   const out = []
   try {
@@ -67,12 +52,13 @@ function themeCandidates() {
   } catch {
     /* ignore */
   }
-  for (const home of guessHomes()) {
-    out.push(
-      `${home}/.hermes/liquid-glass-wal/theme.json`,
-      `${home}/.cache/wal/hermes-liquid-glass-theme.json`
-    )
-  }
+  // Desktop's file bridge expands `~/` in the Electron main process. Keep
+  // home discovery there rather than baking the plugin author's home into a
+  // distributable plugin. The cached resolved path remains first for polling.
+  out.push(
+    '~/.hermes/liquid-glass-wal/theme.json',
+    '~/.cache/wal/hermes-liquid-glass-theme.json'
+  )
   return [...new Set(out)]
 }
 
@@ -108,10 +94,27 @@ function applyGlassKnobs(knobs) {
   root.style.setProperty('--dt-input-bg', '0%')
 }
 
+function selectedMode(theme) {
+  try {
+    const stored = localStorage.getItem(MODE_KEY)
+    if (stored === 'light' || stored === 'dark') return stored
+  } catch {
+    /* ignore */
+  }
+  return theme.hermesWal?.isDark === false ? 'light' : 'dark'
+}
+
+function colorsForMode(theme, mode) {
+  return mode === 'dark'
+    ? (theme.darkColors || theme.colors || {})
+    : (theme.colors || theme.darkColors || {})
+}
+
 function stripPluginFields(theme) {
   const next = { ...theme }
   delete next.hermesGlass
   delete next.hermesWal
+  delete next.hermesGlassByMode
   return next
 }
 
@@ -124,9 +127,9 @@ function textFromRead(res) {
 /** Live-paint seeds so ThemeProvider does not need a full reload. */
 function paintSeeds(theme) {
   try {
-    const c = theme.colors || {}
+    const mode = selectedMode(theme)
+    const c = colorsForMode(theme, mode)
     const root = document.documentElement
-    const mode = theme.hermesWal?.isDark === false ? 'light' : 'dark'
     if (c.background) root.style.setProperty('--theme-background-seed', c.background)
     if (c.foreground) root.style.setProperty('--theme-foreground', c.foreground)
     if (c.primary) {
@@ -145,7 +148,7 @@ function paintSeeds(theme) {
     root.dataset.hermesTheme = THEME_NAME
     root.dataset.hermesMode = mode
     root.style.setProperty('color-scheme', mode)
-    applyGlassKnobs(theme.hermesGlass)
+    applyGlassKnobs(theme.hermesGlassByMode?.[mode] || theme.hermesGlass)
     window.hermesDesktop?.setTitleBarTheme?.({
       background: c.background,
       foreground: c.foreground
@@ -173,6 +176,9 @@ function installTheme(theme, { activate }) {
 
   if (theme.hermesGlass) {
     localStorage.setItem(GLASS_KNOBS_KEY, JSON.stringify(theme.hermesGlass))
+  }
+  if (theme.hermesGlassByMode) {
+    localStorage.setItem(`${GLASS_KNOBS_KEY}:by-mode`, JSON.stringify(theme.hermesGlassByMode))
   }
 
   if (activate) {
@@ -368,20 +374,29 @@ export default {
     tick()
     const interval = setInterval(tick, POLL_MS)
 
-    // One-shot knob apply after mount (ThemeProvider may overwrite seeds once).
+    // ThemeProvider hydrates after disk plugins and can overwrite the first
+    // paint with its initial built-in theme. Repaint the selected stored theme
+    // after mount, not just its mix knobs, so a fresh profile cannot settle on
+    // the default light canvas until the wallpaper poll changes again.
     const boot = () => {
       try {
         if (localStorage.getItem(SKIN_KEY) !== THEME_NAME) return
-        applyGlassKnobs(JSON.parse(localStorage.getItem(GLASS_KNOBS_KEY) || 'null'))
+        const store = JSON.parse(localStorage.getItem(USER_THEMES_KEY) || '{}') || {}
+        const theme = store[THEME_NAME]
+        const knobs = JSON.parse(localStorage.getItem(GLASS_KNOBS_KEY) || 'null')
+        const knobsByMode = JSON.parse(localStorage.getItem(`${GLASS_KNOBS_KEY}:by-mode`) || 'null')
+        if (theme?.colors) paintSeeds({ ...theme, hermesGlass: knobs, hermesGlassByMode: knobsByMode })
+        else applyGlassKnobs(knobs)
       } catch {
         /* ignore */
       }
     }
-    setTimeout(boot, 300)
+    const bootTimers = [setTimeout(boot, 3500), setTimeout(boot, 7000)]
 
     return () => {
       stopped = true
       clearInterval(interval)
+      bootTimers.forEach(clearTimeout)
       disposeTheme()
     }
   }
