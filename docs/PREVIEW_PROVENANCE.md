@@ -25,12 +25,12 @@ This is a local review candidate. It has not been posted, pushed, published, or 
 - Audio: engine launched with `--silent --no-audio-processing`; both outputs contain no audio stream.
 - Runtime plugin SHA-256: `7abd8cfee94cbd5df4f1ed078a6b8e4d67cf06ece1cb50c4627935464e41edac`.
 - Vertical local `project.json` SHA-256: `8db8f2642d28fe638c338991a1ea2c262af72722b3c3069df53da6d065405a3c`.
-- Horizontal 16:9 SHA-256: `29b93924f8887475e92abbb1bb16b738c2f7667e1a8e426a706357d8edcd17a7`.
-- Vertical 9:16 SHA-256: `edffe19323d8a2943ee2625a229dd20bc94c7c624aeb6410df0f9e8314e6ffc6`.
-- Horizontal poster SHA-256: `3760deb8aa80e7b85f216539d47eca14d9f607c51e77e7329ca0d51d84a43251`.
-- Vertical poster SHA-256: `eefed454b7e986c5faf8efbfeeb878c797e0cf4b44a3cd2d41ad029b6dd9360d`.
-- Dual-monitor contact sheet SHA-256: `8418046ead5aee8a76c476f0c88b370e931d9c4b5a41095c3d286450c2cb3779`.
+- Horizontal 16:9 SHA-256: `c53bdbb523e2f532975fe4c1ca5e22b5bcf8bce94a38b9fc2c691e0c81edc457`.
+- Vertical 9:16 SHA-256: `a98b38b65807a59331bb3f9f0bb1d3bb3f99005be863d9a704cc71bb54bb04de`.
+- Horizontal poster SHA-256: `56e8bc7573e6ce7a38a52a621d99766dfd77c4042ce9de8b5c4fa4438908d37b`.
+- Vertical poster SHA-256: `da7bfad9156671be4e7887dfbb044b55b5a4fc1e654ec7f2eaaefb80c650b740`.
+- Dual-monitor contact sheet SHA-256: `42918adc47cfaa799dd8875e11d37d42ab799b15a4cf2ad263336f11338e59a5`.
 - Five-state theme proof sheet SHA-256: `78531fa0df9c38925dd66de6a16b5007d198a9fbd155a3357466b49ca46af028`.
-- Decode and motion proof: both H.264 outputs decode fully with no audio stream; sampled dark/light frame signatures differ. Horizontal is native 1920x1080 at 30 fps; vertical is native 1080x1920 at 30 fps.
+- Decode and motion proof: both H.264 outputs decode fully with no audio stream; sampled dark/light frame signatures differ. Horizontal is native 1920x1080 at 30 fps; vertical is native 1080x1920 at 30 fps. The live engine was started in the active Wayland session with the exact Workshop paths above and `--no-fullscreen-pause`; one-second compositor samples differed on both outputs. The co-resident Hermes3D stream remained active with no dropped-frame, reconnect, disconnect, or streaming-stop entries during either software-encoded take. GPU load returned from 49% to 46% and VRAM from 2394 MiB to 1672 MiB after restoring performance-mode `swaybg`.
 
 Publication remains an explicit Captain decision on the exact video hash.
