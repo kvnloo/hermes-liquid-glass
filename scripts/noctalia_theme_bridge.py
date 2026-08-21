@@ -68,13 +68,29 @@ def wallpaper_backdrop(frame: Path, monitor: str, asset_id: str, receipt: Path) 
         mime = "image/jpeg"
     else:
         raise ValueError("wallpaper frame is not a supported PNG/JPEG image")
-    record = next((item for item in load_json(receipt).get("outputs", []) if item.get("output") == monitor), None)
+    receipt_data = load_json(receipt)
+    record = next((item for item in receipt_data.get("outputs", []) if item.get("output") == monitor), None)
     digest = hashlib.sha256(data).hexdigest()
     if not record or record.get("assetId") != asset_id or record.get("capturedFrameHash") != digest:
         raise ValueError("performance receipt does not bind backdrop frame, output, and asset")
+    profile_id, profile = next(((key, value) for key, value in PROFILES.items() if value["monitor"] == monitor), (None, None))
+    if not profile or profile["assetId"] != asset_id:
+        raise ValueError("untrusted monitor and asset mapping")
+    from PIL import Image
+    with Image.open(frame) as image:
+        image.verify()
+    with Image.open(frame) as image:
+        width, height = image.size
+    receipt_hash = hashlib.sha256(receipt.read_bytes()).hexdigest()
+    generation = int(receipt_data.get("generation", 1))
+    if generation < 1:
+        raise ValueError("invalid receipt generation")
     return {
         "kind": "verified-wallpaper-frame-v1", "monitor": monitor,
         "assetId": asset_id, "frameHash": digest, "frozen": True,
+        "profileId": profile_id, "noctaliaScheme": profile["scheme"],
+        "receiptHash": receipt_hash, "generation": generation,
+        "byteLength": len(data), "width": width, "height": height,
         "mime": mime, "frameUrl": f"data:{mime};base64,{base64.b64encode(data).decode('ascii')}",
     }
 
@@ -111,6 +127,11 @@ def apply(profile_id: str, monitor: str, asset_id: str, mode: str, theme_path: P
     theme = load_json(theme_path)
     scheme = noctalia_scheme(theme)
     theme["hermesBackdrop"] = wallpaper_backdrop(frame, monitor, asset_id, receipt)
+    theme.setdefault("hermesWal", {}).update({
+        "profileId": profile_id, "noctaliaScheme": expected["scheme"],
+        "generation": theme["hermesBackdrop"]["generation"],
+        "receiptHash": theme["hermesBackdrop"]["receiptHash"],
+    })
     atomic_json(theme_path, theme)
     scheme_path = config_dir / "colorschemes" / expected["scheme"] / f"{expected['scheme']}.json"
     atomic_json(scheme_path, scheme)

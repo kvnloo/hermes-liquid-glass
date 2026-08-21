@@ -30,6 +30,12 @@ const EXPECTED_WALLPAPER_KEY = 'hermes.liquid-glass-wal.expectedWallpaper'
 const WALLPAPER_SEEDS_KEY = 'hermes.liquid-glass-wal.wallpaperSeeds'
 const BACKDROP_STYLE_ID = 'hermes-liquid-glass-wallpaper-backdrop'
 const POLL_MS = 4000
+const MAX_FRAME_BYTES = 32 * 1024 * 1024
+const TRUSTED_BACKDROPS = Object.freeze({
+  'DP-1': Object.freeze({ assetId: '2133182232', profileId: 'liquid-glass-forgotten-horizontal', scheme: 'LiquidGlass-Forgotten', wallpaper: 'DP-1.png' }),
+  'DP-2': Object.freeze({ assetId: '1888636115', profileId: 'liquid-glass-clouds-vertical', scheme: 'LiquidGlass-Clouds', wallpaper: 'DP-2.png' })
+})
+let backdropGeneration = 0
 
 function readAuto() {
   try {
@@ -108,12 +114,71 @@ function clearBackdrop() {
   root.style.setProperty('--theme-mix-sidebar', '100%')
 }
 
-function applyBackdrop(backdrop) {
+function rejectBackdrop(reason) {
   clearBackdrop()
-  if (!backdrop || backdrop.kind !== 'verified-wallpaper-frame-v1' ||
-      !backdrop.monitor || !backdrop.assetId || !/^[a-f0-9]{64}$/.test(backdrop.frameHash || '') ||
-      !/^image\/(png|jpeg)$/.test(backdrop.mime || '') ||
-      !/^data:image\/(png|jpeg);base64,/.test(backdrop.frameUrl || '')) return false
+  console.warn?.('[liquid-glass-wal] backdrop rejected', String(reason).slice(0, 48))
+  return false
+}
+
+function decodeBase64(value) {
+  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(value) || value.length % 4 !== 0) throw new Error('base64')
+  const binary = atob(value)
+  return Uint8Array.from(binary, char => char.charCodeAt(0))
+}
+
+function imageDimensions(bytes, mime) {
+  if (mime === 'image/png') {
+    if (bytes.length < 33 || bytes[0] !== 0x89 || bytes[1] !== 0x50 || bytes[2] !== 0x4e || bytes[3] !== 0x47 ||
+        bytes[12] !== 0x49 || bytes[13] !== 0x48 || bytes[14] !== 0x44 || bytes[15] !== 0x52 ||
+        bytes.at(-12) !== 0 || bytes.at(-11) !== 0 || bytes.at(-10) !== 0 || bytes.at(-9) !== 0 ||
+        bytes.at(-8) !== 0x49 || bytes.at(-7) !== 0x45 || bytes.at(-6) !== 0x4e || bytes.at(-5) !== 0x44) throw new Error('png-decode')
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+    return [view.getUint32(16), view.getUint32(20)]
+  }
+  if (mime === 'image/jpeg') {
+    if (bytes.length < 4 || bytes[0] !== 0xff || bytes[1] !== 0xd8 || bytes.at(-2) !== 0xff || bytes.at(-1) !== 0xd9) throw new Error('jpeg-decode')
+    let offset = 2
+    while (offset + 8 < bytes.length) {
+      if (bytes[offset] !== 0xff) throw new Error('jpeg-decode')
+      const marker = bytes[offset + 1]
+      const length = (bytes[offset + 2] << 8) | bytes[offset + 3]
+      if (length < 2 || offset + 2 + length > bytes.length) throw new Error('jpeg-decode')
+      if ([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf].includes(marker)) {
+        return [(bytes[offset + 7] << 8) | bytes[offset + 8], (bytes[offset + 5] << 8) | bytes[offset + 6]]
+      }
+      offset += 2 + length
+    }
+  }
+  throw new Error('image-decode')
+}
+
+async function applyBackdrop(backdrop, wal) {
+  const generation = ++backdropGeneration
+  clearBackdrop()
+  try {
+    if (!backdrop || backdrop.kind !== 'verified-wallpaper-frame-v1' || backdrop.frozen !== true ||
+        !/^[a-f0-9]{64}$/.test(backdrop.frameHash || '') || !/^[a-f0-9]{64}$/.test(backdrop.receiptHash || '') ||
+        !Number.isSafeInteger(backdrop.byteLength) || backdrop.byteLength < 1 || backdrop.byteLength > MAX_FRAME_BYTES ||
+        !Number.isSafeInteger(backdrop.width) || !Number.isSafeInteger(backdrop.height) || backdrop.width < 1 || backdrop.height < 1 ||
+        !Number.isSafeInteger(backdrop.generation) || backdrop.generation < 1) return rejectBackdrop('receipt-shape')
+    const trusted = TRUSTED_BACKDROPS[backdrop.monitor]
+    if (!trusted || backdrop.assetId !== trusted.assetId || backdrop.profileId !== trusted.profileId ||
+        backdrop.noctaliaScheme !== trusted.scheme || wal?.wallpaper !== trusted.wallpaper ||
+        wal?.profileId !== trusted.profileId || wal?.noctaliaScheme !== trusted.scheme ||
+        wal?.generation !== backdrop.generation || wal?.receiptHash !== backdrop.receiptHash) return rejectBackdrop('identity-binding')
+    const match = /^data:(image\/(?:png|jpeg));base64,([A-Za-z0-9+/]*={0,2})$/.exec(backdrop.frameUrl || '')
+    if (!match || match[1] !== backdrop.mime) return rejectBackdrop('encoding')
+    const bytes = decodeBase64(match[2])
+    if (bytes.byteLength !== backdrop.byteLength) return rejectBackdrop('byte-length')
+    const dimensions = imageDimensions(bytes, backdrop.mime)
+    if (dimensions[0] !== backdrop.width || dimensions[1] !== backdrop.height) return rejectBackdrop('dimensions')
+    const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))]
+      .map(value => value.toString(16).padStart(2, '0')).join('')
+    if (digest !== backdrop.frameHash) return rejectBackdrop('frame-hash')
+    if (generation !== backdropGeneration) return rejectBackdrop('stale-reapply')
+  } catch (error) {
+    return rejectBackdrop(error?.message || 'validation')
+  }
   const root = document.documentElement
   root.style.setProperty('--hermes-wallpaper-backdrop', `url("${backdrop.frameUrl}")`)
   const style = document.createElement?.('style')
@@ -171,7 +236,7 @@ function textFromRead(res) {
 }
 
 /** Live-paint seeds so ThemeProvider does not need a full reload. */
-function paintSeeds(theme) {
+async function paintSeeds(theme) {
   try {
     // Explicitly disabling wallpaper seeds is the mutation/control path. In
     // production this leaves ThemeProvider's built-in theme variables intact.
@@ -198,7 +263,7 @@ function paintSeeds(theme) {
     root.dataset.hermesTheme = THEME_NAME
     root.dataset.hermesMode = mode
     root.style.setProperty('color-scheme', mode)
-    if (applyBackdrop(theme.hermesBackdrop)) {
+    if (await applyBackdrop(theme.hermesBackdrop, theme.hermesWal)) {
       applyGlassKnobs(theme.hermesGlassByMode?.[mode] || theme.hermesGlass)
     }
     window.hermesDesktop?.setTitleBarTheme?.({
@@ -212,7 +277,7 @@ function paintSeeds(theme) {
   }
 }
 
-function installTheme(theme, { activate }) {
+async function installTheme(theme, { activate }) {
   assertExpectedWallpaper(theme)
   const clean = stripPluginFields(theme)
   clean.name = THEME_NAME
@@ -252,13 +317,13 @@ function installTheme(theme, { activate }) {
     } catch {
       /* ignore */
     }
-    paintSeeds(theme)
+    await paintSeeds(theme)
   }
 
   return clean
 }
 
-function hydrateStoredTheme() {
+async function hydrateStoredTheme() {
   if (localStorage.getItem(SKIN_KEY) !== THEME_NAME) return false
   const store = JSON.parse(localStorage.getItem(USER_THEMES_KEY) || '{}') || {}
   const theme = store[THEME_NAME]
@@ -268,7 +333,7 @@ function hydrateStoredTheme() {
   if (!theme?.colors) return false
   const restored = { ...theme, hermesGlass: knobs, hermesGlassByMode: knobsByMode, hermesWal: wal }
   assertExpectedWallpaper(restored)
-  paintSeeds(restored)
+  await paintSeeds(restored)
   return true
 }
 
@@ -374,7 +439,7 @@ export default {
             return
           }
           publishTheme(got.theme, got.hash)
-          installTheme(got.theme, { activate: true })
+          await installTheme(got.theme, { activate: true })
           localStorage.setItem(LAST_HASH_KEY, got.hash)
           host.toast?.({
             title: 'Liquid Glass',
@@ -427,7 +492,7 @@ export default {
         if (!readAuto()) return
 
         if (got.hash !== lastAppliedHash) {
-          installTheme(got.theme, { activate: true })
+          await installTheme(got.theme, { activate: true })
           lastAppliedHash = got.hash
           try {
             localStorage.setItem(LAST_HASH_KEY, got.hash)
@@ -444,7 +509,7 @@ export default {
           ? `${got.theme.hermesBackdrop.monitor}:${got.theme.hermesBackdrop.assetId}:${got.theme.hermesBackdrop.frameHash}`
           : 'opaque-fallback'
         if (document.documentElement.dataset.hermesBackdrop !== backdropId) {
-          paintSeeds(got.theme)
+          await paintSeeds(got.theme)
         }
 
         // Stable theme: do nothing. Re-applying knobs every poll caused flicker.
@@ -460,9 +525,9 @@ export default {
     // paint with its initial built-in theme. Repaint the selected stored theme
     // after mount, not just its mix knobs, so a fresh profile cannot settle on
     // the default light canvas until the wallpaper poll changes again.
-    const boot = () => {
+    const boot = async () => {
       try {
-        hydrateStoredTheme()
+        await hydrateStoredTheme()
       } catch {
         /* ignore */
       }

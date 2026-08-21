@@ -39,7 +39,7 @@ r.values.set('hermes.liquid-glass-wal.wallpaperSeeds', seedsEnabled ? '1' : '0')
 r.values.set('hermes-desktop-mode-v1', mode)
 
 try {
-  r.api.installTheme(theme, { activate: true })
+  await r.api.installTheme(theme, { activate: true })
   if (command === 'hydrate' || command === 'control') {
       // Simulate the operator's persisted mode choice after initial install.
       r.values.set('hermes-desktop-mode-v1', mode)
@@ -48,7 +48,7 @@ try {
         r.props.set('--theme-background-seed', '#ffffff')
         r.props.set('--theme-primary', '#3b82f6')
       }
-      r.api.hydrateStoredTheme()
+      await r.api.hydrateStoredTheme()
   }
   console.log(JSON.stringify({ ok: true, mode: r.root.dataset.hermesMode || mode,
     theme: r.root.dataset.hermesTheme || 'nous', backdrop: r.root.dataset.hermesBackdrop,

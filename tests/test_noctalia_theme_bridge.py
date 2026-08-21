@@ -4,7 +4,10 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from io import BytesIO
 from pathlib import Path
+
+from PIL import Image
 
 MODULE_PATH = Path(__file__).parents[1] / "scripts" / "noctalia_theme_bridge.py"
 spec = importlib.util.spec_from_file_location("bridge", MODULE_PATH)
@@ -22,7 +25,9 @@ class NoctaliaBridgeTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         root = Path(self.temp.name)
         self.frame = root / "DP-1.png"
-        self.frame.write_bytes(b"\x89PNG\r\n\x1a\n" + b"captured-current-frame")
+        stream = BytesIO()
+        Image.new("RGB", (32, 24), (31, 72, 61)).save(stream, "PNG")
+        self.frame.write_bytes(stream.getvalue())
         digest = hashlib.sha256(self.frame.read_bytes()).hexdigest()
         self.receipt = root / "receipt.json"
         self.receipt.write_text(json.dumps({"outputs": [{"output": "DP-1", "assetId": "2133182232", "capturedFrameHash": digest}]}))
