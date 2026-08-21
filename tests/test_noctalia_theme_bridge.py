@@ -22,7 +22,7 @@ class NoctaliaBridgeTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         root = Path(self.temp.name)
         self.frame = root / "DP-1.png"
-        self.frame.write_bytes(b"captured-current-frame")
+        self.frame.write_bytes(b"\x89PNG\r\n\x1a\n" + b"captured-current-frame")
         digest = hashlib.sha256(self.frame.read_bytes()).hexdigest()
         self.receipt = root / "receipt.json"
         self.receipt.write_text(json.dumps({"outputs": [{"output": "DP-1", "assetId": "2133182232", "capturedFrameHash": digest}]}))
@@ -55,5 +55,26 @@ class NoctaliaBridgeTests(unittest.TestCase):
         changed["colorSchemes"].update({"useWallpaperColors":False,"predefinedScheme":"LiquidGlass-Forgotten","darkMode":False,"monitorForColors":"DP-1"})
         self.assertEqual(original["bar"], changed["bar"])
         self.assertEqual(original["hooks"], changed["hooks"])
+
+    def test_backdrop_embeds_exact_receipt_bound_pixels(self):
+        backdrop = bridge.wallpaper_backdrop(self.frame, "DP-1", "2133182232", self.receipt)
+        self.assertEqual(backdrop["frameHash"], hashlib.sha256(self.frame.read_bytes()).hexdigest())
+        self.assertEqual(backdrop["mime"], "image/png")
+        self.assertTrue(backdrop["frameUrl"].startswith("data:image/png;base64,"))
+
+    def test_backdrop_rejects_monitor_asset_and_stale_frame(self):
+        for monitor, asset in (("DP-2", "2133182232"), ("DP-1", "1888636115")):
+            with self.assertRaisesRegex(ValueError, "does not bind"):
+                bridge.wallpaper_backdrop(self.frame, monitor, asset, self.receipt)
+        self.frame.write_bytes(b"\x89PNG\r\n\x1a\nchanged")
+        with self.assertRaisesRegex(ValueError, "does not bind"):
+            bridge.wallpaper_backdrop(self.frame, "DP-1", "2133182232", self.receipt)
+
+    def test_backdrop_rejects_hostile_non_image(self):
+        self.frame.write_bytes(b"HERMES3D/OBS/PRIVATE")
+        digest = hashlib.sha256(self.frame.read_bytes()).hexdigest()
+        self.receipt.write_text(json.dumps({"outputs": [{"output": "DP-1", "assetId": "2133182232", "capturedFrameHash": digest}]}))
+        with self.assertRaisesRegex(ValueError, "supported PNG/JPEG"):
+            bridge.wallpaper_backdrop(self.frame, "DP-1", "2133182232", self.receipt)
 
 if __name__ == "__main__": unittest.main()

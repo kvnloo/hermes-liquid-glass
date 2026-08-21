@@ -28,6 +28,7 @@ const LAST_HASH_KEY = 'hermes.liquid-glass-wal.lastHash'
 const PATH_CACHE_KEY = 'hermes.liquid-glass-wal.themePath'
 const EXPECTED_WALLPAPER_KEY = 'hermes.liquid-glass-wal.expectedWallpaper'
 const WALLPAPER_SEEDS_KEY = 'hermes.liquid-glass-wal.wallpaperSeeds'
+const BACKDROP_STYLE_ID = 'hermes-liquid-glass-wallpaper-backdrop'
 const POLL_MS = 4000
 
 function readAuto() {
@@ -97,6 +98,38 @@ function applyGlassKnobs(knobs) {
   root.style.setProperty('--dt-input-bg', '0%')
 }
 
+function clearBackdrop() {
+  if (typeof document === 'undefined') return
+  document.getElementById?.(BACKDROP_STYLE_ID)?.remove?.()
+  const root = document.documentElement
+  root.dataset.hermesBackdrop = 'opaque-fallback'
+  root.style.setProperty('--hermes-wallpaper-backdrop', 'none')
+  root.style.setProperty('--theme-mix-chrome', '100%')
+  root.style.setProperty('--theme-mix-sidebar', '100%')
+}
+
+function applyBackdrop(backdrop) {
+  clearBackdrop()
+  if (!backdrop || backdrop.kind !== 'verified-wallpaper-frame-v1' ||
+      !backdrop.monitor || !backdrop.assetId || !/^[a-f0-9]{64}$/.test(backdrop.frameHash || '') ||
+      !/^image\/(png|jpeg)$/.test(backdrop.mime || '') ||
+      !/^data:image\/(png|jpeg);base64,/.test(backdrop.frameUrl || '')) return false
+  const root = document.documentElement
+  root.style.setProperty('--hermes-wallpaper-backdrop', `url("${backdrop.frameUrl}")`)
+  const style = document.createElement?.('style')
+  if (!style) return false
+  style.id = BACKDROP_STYLE_ID
+  style.textContent = `html { background: var(--theme-background-seed) !important; }\n` +
+    `body { position:relative; isolation:isolate; background:transparent !important; }\n` +
+    `body::before { content:""; position:fixed; inset:0; z-index:0; pointer-events:none; ` +
+    `background-image:var(--hermes-wallpaper-backdrop); background-size:cover; background-position:center; }`
+    + `\n#root { position:relative; z-index:1; background-image:var(--hermes-wallpaper-backdrop) !important; ` +
+    `background-size:cover !important; background-position:center !important; }`
+  document.head?.appendChild(style)
+  root.dataset.hermesBackdrop = `${backdrop.monitor}:${backdrop.assetId}:${backdrop.frameHash}`
+  return true
+}
+
 function selectedMode(theme) {
   try {
     const stored = localStorage.getItem(MODE_KEY)
@@ -127,6 +160,7 @@ function stripPluginFields(theme) {
   delete next.hermesGlass
   delete next.hermesWal
   delete next.hermesGlassByMode
+  delete next.hermesBackdrop
   return next
 }
 
@@ -164,7 +198,9 @@ function paintSeeds(theme) {
     root.dataset.hermesTheme = THEME_NAME
     root.dataset.hermesMode = mode
     root.style.setProperty('color-scheme', mode)
-    applyGlassKnobs(theme.hermesGlassByMode?.[mode] || theme.hermesGlass)
+    if (applyBackdrop(theme.hermesBackdrop)) {
+      applyGlassKnobs(theme.hermesGlassByMode?.[mode] || theme.hermesGlass)
+    }
     window.hermesDesktop?.setTitleBarTheme?.({
       background: c.background,
       foreground: c.foreground
@@ -400,6 +436,15 @@ export default {
           }
           // No location.reload() — live paintSeeds is enough and avoids flash.
           return
+        }
+
+        // Native backdrop bytes deliberately stay out of localStorage quota.
+        // Repaint directly from the validated theme file after renderer reload.
+        const backdropId = got.theme.hermesBackdrop
+          ? `${got.theme.hermesBackdrop.monitor}:${got.theme.hermesBackdrop.assetId}:${got.theme.hermesBackdrop.frameHash}`
+          : 'opaque-fallback'
+        if (document.documentElement.dataset.hermesBackdrop !== backdropId) {
+          paintSeeds(got.theme)
         }
 
         // Stable theme: do nothing. Re-applying knobs every poll caused flicker.

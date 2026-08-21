@@ -2,7 +2,7 @@
 
 **Linux-native liquid glass** for [Hermes Desktop](https://github.com/NousResearch/hermes-agent):
 
-`Wallpaper Engine / swww` → **pywal** → **Hyprland frost** → **Hermes Desktop plugin**
+`Wallpaper Engine / swww` → **verified frame + pywal** → **Hermes Desktop plugin**
 
 When the wallpaper changes, Desktop accent/chrome follow automatically.
 
@@ -61,7 +61,7 @@ Override with `HERMES_LIQUID_GLASS_HOME=/somewhere`.
 
 ## Requirements
 
-- Linux + [Hyprland](https://hyprland.org/) (for real frost; plugin still themes without it)
+- Linux + [Hyprland](https://hyprland.org/) (Hermes remains compositor-opaque)
 - [pywal](https://github.com/dylanaraps/pywal) (`wal`)
 - [Hermes Desktop](https://github.com/NousResearch/hermes-agent)
 - Optional: Wallpaper Engine (`linux-wallpaperengine`) or any wallpaper tool that feeds pywal
@@ -75,19 +75,14 @@ cd hermes-liquid-glass
 # equivalent: mkdir -p ~/.hermes/desktop-plugins && ln -sfn "$PWD/plugin" ~/.hermes/desktop-plugins/liquid-glass-wal
 ```
 
-### Hyprland frost
+### Hyprland safety boundary
 
 ```conf
 # ~/.config/hypr/hyprland.conf
 source = /absolute/path/to/hermes-liquid-glass/hypr/liquid-glass.conf
 
-decoration {
-    blur {
-        enabled = true
-        ignore_opacity = true   # critical — otherwise muddy fade
-        # size / passes to taste
-    }
-}
+# Do not add an opacity rule for Hermes. The shipped fragment keeps the
+# window opaque; the plugin composites verified wallpaper pixels itself.
 ```
 
 ### Wire pywal
@@ -107,7 +102,7 @@ If you use [kvnloo/.files](https://github.com/kvnloo/.files), this is already ho
    - `~/.cache/wal/hermes-liquid-glass-theme.json`
    - `~/.hermes/liquid-glass-wal/theme.json`
 3. Runtime plugin polls the file, installs skin `liquid-glass-wal`, paints CSS seeds **without** full-window reload
-4. Hyprland `opacity` + `blur:ignore_opacity` provide frost see-through
+4. The plugin composites a receipt-bound wallpaper frame inside an opaque window. Missing, stale, or mismatched frames use opaque theme surfaces.
 
 ## Palette commands
 

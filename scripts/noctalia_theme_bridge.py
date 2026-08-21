@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import os
@@ -58,6 +59,26 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def wallpaper_backdrop(frame: Path, monitor: str, asset_id: str, receipt: Path) -> dict:
+    """Embed a receipt-bound frame so Electron never samples desktop pixels."""
+    data = frame.read_bytes()
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        mime = "image/png"
+    elif data.startswith(b"\xff\xd8\xff"):
+        mime = "image/jpeg"
+    else:
+        raise ValueError("wallpaper frame is not a supported PNG/JPEG image")
+    record = next((item for item in load_json(receipt).get("outputs", []) if item.get("output") == monitor), None)
+    digest = hashlib.sha256(data).hexdigest()
+    if not record or record.get("assetId") != asset_id or record.get("capturedFrameHash") != digest:
+        raise ValueError("performance receipt does not bind backdrop frame, output, and asset")
+    return {
+        "kind": "verified-wallpaper-frame-v1", "monitor": monitor,
+        "assetId": asset_id, "frameHash": digest, "frozen": True,
+        "mime": mime, "frameUrl": f"data:{mime};base64,{base64.b64encode(data).decode('ascii')}",
+    }
+
+
 def validate(profile_id: str, monitor: str, asset_id: str, scheme_name: str, frame: Path, receipt: Path) -> dict:
     expected = PROFILES.get(profile_id)
     if not expected:
@@ -87,7 +108,10 @@ def atomic_json(path: Path, data: dict) -> None:
 def apply(profile_id: str, monitor: str, asset_id: str, mode: str, theme_path: Path, frame: Path, receipt: Path, config_dir: Path) -> dict:
     expected = PROFILES[profile_id]
     validate(profile_id, monitor, asset_id, expected["scheme"], frame, receipt)
-    scheme = noctalia_scheme(load_json(theme_path))
+    theme = load_json(theme_path)
+    scheme = noctalia_scheme(theme)
+    theme["hermesBackdrop"] = wallpaper_backdrop(frame, monitor, asset_id, receipt)
+    atomic_json(theme_path, theme)
     scheme_path = config_dir / "colorschemes" / expected["scheme"] / f"{expected['scheme']}.json"
     atomic_json(scheme_path, scheme)
     settings_path = config_dir / "settings.json"

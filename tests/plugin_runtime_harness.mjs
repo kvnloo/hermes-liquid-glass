@@ -10,18 +10,22 @@ function runtime() {
     ['--theme-primary', '#3b82f6']
   ])
   const classes = new Set()
+  const elements = new Map()
   globalThis.localStorage = {
     getItem: key => values.has(key) ? values.get(key) : null,
-    setItem: (key, value) => values.set(key, String(value))
+    setItem: (key, value) => values.set(key, String(value)),
+    removeItem: key => values.delete(key)
   }
   globalThis.document = { documentElement: {
     style: { setProperty: (key, value) => props.set(key, value) },
     classList: { toggle: (key, on) => on ? classes.add(key) : classes.delete(key) },
     dataset: {}
-  }}
+  }, getElementById: id => elements.get(id) || null,
+    createElement: () => ({ remove() { elements.delete(this.id) } }),
+    head: { appendChild: element => elements.set(element.id, element) }}
   globalThis.window = { hermesDesktop: {} }
   const api = Function(`${body}; return { installTheme, hydrateStoredTheme }`)()
-  return { api, values, props, root: document.documentElement }
+  return { api, values, props, root: document.documentElement, elements }
 }
 
 const theme = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
@@ -47,7 +51,9 @@ try {
       r.api.hydrateStoredTheme()
   }
   console.log(JSON.stringify({ ok: true, mode: r.root.dataset.hermesMode || mode,
-    theme: r.root.dataset.hermesTheme || 'nous', styles: Object.fromEntries(r.props) }))
+    theme: r.root.dataset.hermesTheme || 'nous', backdrop: r.root.dataset.hermesBackdrop,
+    backdropStyle: r.elements.get('hermes-liquid-glass-wallpaper-backdrop')?.textContent || '',
+    styles: Object.fromEntries(r.props) }))
 } catch (error) {
   console.log(JSON.stringify({ ok: false, error: error.message }))
   process.exitCode = 2
