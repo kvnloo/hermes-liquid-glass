@@ -1,6 +1,7 @@
 import importlib.util
 import hashlib
 import json
+import os
 import subprocess
 import tempfile
 from pathlib import Path
@@ -9,7 +10,7 @@ from typing import cast
 from PIL import Image
 
 REPO = Path(__file__).parents[1]
-OUTPUT = REPO.parent / "task-t_26a896f4/proofs/computed-styles.json"
+OUTPUT = Path(os.environ.get("LIQUID_GLASS_EVIDENCE_OUTPUT", REPO / "tests/runtime-evidence/computed-styles.json"))
 PROOFS = OUTPUT.parent
 spec = importlib.util.spec_from_file_location("build_theme", REPO / "scripts/build_theme.py")
 assert spec is not None and spec.loader is not None
@@ -98,10 +99,10 @@ def main():
         "schema": "liquid-glass-runtime-computed-styles-v2",
         "captureKind": "deterministic plugin hydration harness",
         "states": [
-            state("dp1-forgotten-dark", FORGOTTEN, "dark", "forgotten-ruins.png"),
-            state("dp1-forgotten-light", FORGOTTEN, "light", "forgotten-ruins.png"),
-            state("dp2-clouds-dark", CLOUDS, "dark", "mountain-peak-clouds.jpg"),
-            state("dp2-clouds-light", CLOUDS, "light", "mountain-peak-clouds.jpg"),
+            state("dp1-forgotten-dark", FORGOTTEN, "dark", "DP-1.png"),
+            state("dp1-forgotten-light", FORGOTTEN, "light", "DP-1.png"),
+            state("dp2-clouds-dark", CLOUDS, "dark", "DP-2.png"),
+            state("dp2-clouds-light", CLOUDS, "light", "DP-2.png"),
         ],
         "builtinControl": builtin,
         "computedPixelEvidence": pixel_evidence,

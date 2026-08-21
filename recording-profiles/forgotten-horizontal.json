@@ -3,7 +3,7 @@
   "monitor": "DP-1",
   "themeId": "liquid-glass-wal",
   "noctaliaScheme": "LiquidGlass-Forgotten",
-  "expectedWallpaper": "forgotten-ruins.png",
+  "expectedWallpaper": "DP-1.png",
   "expectedAssetId": "2133182232",
   "mode": "dark"
 }

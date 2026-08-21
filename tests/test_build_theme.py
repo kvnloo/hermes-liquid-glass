@@ -90,7 +90,7 @@ class ThemeBuildTests(unittest.TestCase):
     def test_clouds_vertical_identity_and_hydration_preserve_light_mode(self):
         clouds = json.loads((Path(__file__).parent / "fixtures/clouds-pywal.json").read_text())
         theme = build_theme.build_theme(clouds)
-        result, payload = self.run_runtime(theme, "hydrate", "light", "mountain-peak-clouds.jpg")
+        result, payload = self.run_runtime(theme, "hydrate", "light", "DP-2.png")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(payload["mode"], "light")
         self.assertEqual(payload["theme"], "liquid-glass-wal")
@@ -100,7 +100,7 @@ class ThemeBuildTests(unittest.TestCase):
     def test_vertical_recording_profile_is_bound_to_clouds_and_wrong_id_fails(self):
         profile_path = Path(__file__).parents[1] / "recording-profiles/clouds-vertical.json"
         profile = json.loads(profile_path.read_text())
-        self.assertEqual(profile["expectedWallpaper"], "mountain-peak-clouds.jpg")
+        self.assertEqual(profile["expectedWallpaper"], "DP-2.png")
         clouds = json.loads((Path(__file__).parent / "fixtures/clouds-pywal.json").read_text())
         theme = build_theme.build_theme(clouds)
         ok_result, _ = self.run_runtime(theme, "hydrate", profile["mode"], profile["expectedWallpaper"])

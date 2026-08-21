@@ -18,19 +18,19 @@ This is a local review candidate. It has not been posted, pushed, published, or 
 - Theme ID: `liquid-glass-wal`, authored by `kvnloo`; each recording uses its own isolated profile because one Hermes window has one global theme.
 - Horizontal wallpaper: [Forgotten Ruins](https://steamcommunity.com/sharedfiles/filedetails/?id=2133182232), Workshop item `2133182232`, credited to Tiamat and Historyk.
 - Vertical wallpaper: [Abstract Landscape](https://steamcommunity.com/sharedfiles/filedetails/?id=1888636115), Workshop item `1888636115`, uploaded by [Ark](https://steamcommunity.com/profiles/76561198095821837), SteamID64 `76561198095821837`.
-- Vertical palette: exact cached pywal scheme for `/home/kvn/workspace/UX/background/3440x1440/mountain-peak-clouds.jpg`, used as the configured `Clouds` theme while the actual DP-2 Wallpaper Engine asset remains Abstract Landscape.
+- Palette source: each output's current live Wallpaper Engine frame is frozen byte-for-byte by performance mode, then passed through pywal. DP-1 (`2133182232`) generates Forgotten Ruins; DP-2 (`1888636115`) generates Clouds. Hermes and Noctalia consume the same generated per-take palette. No substitute palette is authored by hand.
 - Supersession: commit `dbe8379` did not use the Clouds palette on the vertical take. Its media bytes remain in Git history but are rejected and superseded by this candidate.
 - Vertical attribution evidence: the unauthenticated Steam `GetPublishedFileDetails` response names title `Abstract Landscape`, creator ID `76561198095821837`, public visibility, and description `Color shift/particle/glow` plus the creator's Buy Me a Coffee URL. The creator's public Steam XML profile resolves that ID to display name `Ark`. Local `project.json` independently matches title, description, type, and public visibility. Local `appworkshop_431960.acf` independently binds item `1888636115` to size `6367689`, update time `1570983899`, and manifest `4050080889335767698`, matching the public API response.
 - Usage note: neither the public Workshop metadata nor the local project metadata states a separate redistribution license. The wallpapers remain incidental third-party background media. This private review candidate does not claim ownership or broad reuse rights. Public publication remains gated on Captain review of this exact media and attribution risk.
 - Audio: engine launched with `--silent --no-audio-processing`; both outputs contain no audio stream.
 - Runtime plugin SHA-256: `7abd8cfee94cbd5df4f1ed078a6b8e4d67cf06ece1cb50c4627935464e41edac`.
 - Vertical local `project.json` SHA-256: `8db8f2642d28fe638c338991a1ea2c262af72722b3c3069df53da6d065405a3c`.
-- Horizontal 16:9 SHA-256: `c53bdbb523e2f532975fe4c1ca5e22b5bcf8bce94a38b9fc2c691e0c81edc457`.
-- Vertical 9:16 SHA-256: `a98b38b65807a59331bb3f9f0bb1d3bb3f99005be863d9a704cc71bb54bb04de`.
-- Horizontal poster SHA-256: `56e8bc7573e6ce7a38a52a621d99766dfd77c4042ce9de8b5c4fa4438908d37b`.
-- Vertical poster SHA-256: `da7bfad9156671be4e7887dfbb044b55b5a4fc1e654ec7f2eaaefb80c650b740`.
-- Dual-monitor contact sheet SHA-256: `42918adc47cfaa799dd8875e11d37d42ab799b15a4cf2ad263336f11338e59a5`.
-- Five-state theme proof sheet SHA-256: `78531fa0df9c38925dd66de6a16b5007d198a9fbd155a3357466b49ca46af028`.
-- Decode and motion proof: both H.264 outputs decode fully with no audio stream; sampled dark/light frame signatures differ. Horizontal is native 1920x1080 at 30 fps; vertical is native 1080x1920 at 30 fps. The live engine was started in the active Wayland session with the exact Workshop paths above and `--no-fullscreen-pause`; one-second compositor samples differed on both outputs. The co-resident Hermes3D stream remained active with no dropped-frame, reconnect, disconnect, or streaming-stop entries during either software-encoded take. GPU load returned from 49% to 46% and VRAM from 2394 MiB to 1672 MiB after restoring performance-mode `swaybg`.
+- Horizontal 16:9 SHA-256: `8ae485233a106c169571e1fb36392fcb41dd8b9bd88c3dba5530ab5a26fd11eb`.
+- Vertical 9:16 SHA-256: `a3884f066c31497cdf5c657b0de03b03a481a0527e8e159fb5c082ee60364658`.
+- Horizontal poster SHA-256: `0919495a032c15d9415613fbaf9cd260175722e552120248976be0906707194b`.
+- Vertical poster SHA-256: `30067cd7ff7ad54161d2fc1bf7b343c73b6b5469a42b69a42d431f6dff339fa7`.
+- Four-state contact sheet SHA-256: `d2b8069eeb7e32b110e1e125f36151c7be824f067aa98326aba42100c5cc75a4`.
+- Four-state Noctalia theme proof sheet SHA-256: `d2b8069eeb7e32b110e1e125f36151c7be824f067aa98326aba42100c5cc75a4`.
+- Decode and motion proof: both H.264 outputs decode fully with no audio stream; sampled dark/light frame signatures differ. Horizontal is native 1920x1080 at 30 fps; vertical is native 1080x1920 at 30 fps. Each take includes the real full-width Noctalia bar, switched through Noctalia IPC from the same generated theme consumed by Hermes. The live engine was started in the active Wayland session with the exact Workshop paths above. The co-resident Hermes3D Browser Source stream remained running throughout. Performance-mode `swaybg`, the prior Noctalia selection, and the pre-take pywal/Hermes theme were restored after capture.
 
 Publication remains an explicit Captain decision on the exact video hash.
