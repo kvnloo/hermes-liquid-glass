@@ -27,12 +27,12 @@ This is a local review candidate. It has not been posted, pushed, published, or 
 - Audio: engine launched with `--silent --no-audio-processing`; both outputs contain no audio stream.
 - Runtime plugin SHA-256: `7abd8cfee94cbd5df4f1ed078a6b8e4d67cf06ece1cb50c4627935464e41edac`.
 - Vertical local `project.json` SHA-256: `8db8f2642d28fe638c338991a1ea2c262af72722b3c3069df53da6d065405a3c`.
-- Horizontal 16:9 SHA-256: `8ae485233a106c169571e1fb36392fcb41dd8b9bd88c3dba5530ab5a26fd11eb`.
-- Vertical 9:16 SHA-256: `a3884f066c31497cdf5c657b0de03b03a481a0527e8e159fb5c082ee60364658`.
-- Horizontal poster SHA-256: `0919495a032c15d9415613fbaf9cd260175722e552120248976be0906707194b`.
-- Vertical poster SHA-256: `30067cd7ff7ad54161d2fc1bf7b343c73b6b5469a42b69a42d431f6dff339fa7`.
-- Four-state contact sheet SHA-256: `d2b8069eeb7e32b110e1e125f36151c7be824f067aa98326aba42100c5cc75a4`.
-- Four-state Noctalia theme proof sheet SHA-256: `d2b8069eeb7e32b110e1e125f36151c7be824f067aa98326aba42100c5cc75a4`.
+- Horizontal 16:9 SHA-256: `e1cb32a8b22d1442359177a432f54cd4a5467a4b72353564cce86cd1aeee968a`.
+- Vertical 9:16 SHA-256: `898ab962b56eceb1c910a05f572322c22a173fd6fbf464ac125861f0f581844c`.
+- Horizontal poster SHA-256: `e7f4210c7ad83dcf4b2871f0ca1e09622c643f7049e8b4c9c0c7bdb7bdc63557`.
+- Vertical poster SHA-256: `4a8eb6f98a4e14c85702525cbe7b8056641ef812ccde9b7dba019a98e503118c`.
+- Four-state contact sheet SHA-256: `02f70fe1192b626ea958307dac2f51b8572545adc4a4067979cc1c434bcb8c06`.
+- Four-state Noctalia theme proof sheet SHA-256: `02f70fe1192b626ea958307dac2f51b8572545adc4a4067979cc1c434bcb8c06`.
 - Decode and motion proof: both H.264 outputs decode fully with no audio stream; sampled dark/light frame signatures differ. Horizontal is native 1920x1080 at 30 fps; vertical is native 1080x1920 at 30 fps. Each take includes the real full-width Noctalia bar, switched through Noctalia IPC from the same generated theme consumed by Hermes. The live engine was started in the active Wayland session with the exact Workshop paths above. The co-resident Hermes3D Browser Source stream remained running throughout. Performance-mode `swaybg`, the prior Noctalia selection, and the pre-take pywal/Hermes theme were restored after capture.
 
 Publication remains an explicit Captain decision on the exact video hash.
