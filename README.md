@@ -86,12 +86,26 @@ If you use [kvnloo/.files](https://github.com/kvnloo/.files), this is already ho
 3. Runtime plugin polls the file, installs skin `liquid-glass-wal`, paints CSS seeds **without** full-window reload
 4. Hyprland `opacity` + `blur:ignore_opacity` provide frost see-through
 
+### Optional compact layout
+
+Run **Liquid Glass: toggle compact three-column layout** from the command
+palette to opt into the denser UI variant. It uses Hermes' stable shell IDs for
+the navigation and chat side rails, a 4/8px rhythm, thin separators, restrained
+radii, and consistent 15px line icons. The preference is stored locally and is
+**off by default**, so existing installs keep their current layout.
+
+This is a layout layer only: it contains no fixed color palette. All surfaces,
+selection states, borders, and accents continue to use the active pywal-derived
+Hermes theme variables. Wallpaper poll updates repaint the theme and reassert
+the layout layer live without `location.reload()`.
+
 ## Palette commands
 
 | Command | Action |
 |---------|--------|
 | Liquid Glass: sync from pywal now | Force rebuild apply + one reload |
 | Liquid Glass: toggle auto-apply… | Enable/disable wallpaper auto-theme |
+| Liquid Glass: toggle compact three-column layout | Enable/disable the opt-in dense layout |
 
 ## Distribution / “store”
 
@@ -112,6 +126,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ```bash
 node --check plugin/plugin.js
+node --test tests/plugin.test.mjs
 ./scripts/apply.sh
 # Reload desktop plugins in Hermes
 ```

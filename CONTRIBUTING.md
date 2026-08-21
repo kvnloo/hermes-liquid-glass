@@ -43,6 +43,7 @@ Edit `plugin/plugin.js`, save, reload plugins. Prove load with:
 
 ```bash
 node --check plugin/plugin.js
+node --test tests/plugin.test.mjs
 # Live proof = plugin appears in Settings → Plugins + palette commands work
 ```
 

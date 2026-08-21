@@ -25,7 +25,101 @@ const GLASS_KNOBS_KEY = 'hermes-desktop-glass-knobs-v1'
 const AUTO_KEY = 'hermes.liquid-glass-wal.auto'
 const LAST_HASH_KEY = 'hermes.liquid-glass-wal.lastHash'
 const PATH_CACHE_KEY = 'hermes.liquid-glass-wal.themePath'
+const COMPACT_LAYOUT_KEY = 'hermes.liquid-glass-wal.compactLayout'
+const COMPACT_STYLE_ID = 'hermes-liquid-glass-o8-style'
 const POLL_MS = 4000
+
+// Layout only: every color remains derived from Hermes/pywal variables.
+const COMPACT_LAYOUT_CSS = `
+:root[data-hermes-liquid-glass-layout="compact"] {
+  --sidebar-width: 14rem;
+  --sidebar-content-inline-padding: 0.75rem;
+  --o8-compact-radius: 0.25rem;
+}
+@media (min-width: 1024px) {
+  :root[data-hermes-liquid-glass-layout="compact"] #app-sidebar {
+    width: var(--sidebar-width) !important;
+    border-right: 1px solid var(--dt-border) !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] #chat-side-panel {
+    width: 16rem !important;
+    gap: 0.5rem !important;
+    padding-left: 0.5rem;
+    border-left: 1px solid var(--dt-border);
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] #app-sidebar > :first-child {
+    height: 2.75rem !important;
+    padding-inline: 0.75rem !important;
+  }
+}
+:root[data-hermes-liquid-glass-layout="compact"] body {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+:root[data-hermes-liquid-glass-layout="compact"] #app-sidebar nav {
+  padding-block: 0.25rem !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] #app-sidebar nav a,
+:root[data-hermes-liquid-glass-layout="compact"] #app-sidebar nav button {
+  min-height: 2rem;
+  padding-block: 0.25rem !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(button, input, textarea, select) {
+  border-radius: var(--o8-compact-radius) !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(button, a) svg {
+  width: 0.9375rem;
+  height: 0.9375rem;
+  stroke-width: 1.6;
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(.rounded-lg, .rounded-xl, .rounded-2xl) {
+  border-radius: 0.375rem !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where([aria-current="page"], [data-state="active"]) {
+  box-shadow: inset 2px 0 0 var(--dt-ring);
+  background: color-mix(in srgb, var(--dt-primary) 9%, transparent);
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(hr, [role="separator"]) {
+  border-color: var(--dt-border);
+  opacity: 0.72;
+}
+`
+
+function readCompactLayout() {
+  try {
+    const value = localStorage.getItem(COMPACT_LAYOUT_KEY)
+    return value === '1' || value === 'true'
+  } catch {
+    return false
+  }
+}
+
+function applyCompactLayout(on = readCompactLayout()) {
+  if (typeof document === 'undefined') return
+  const root = document.documentElement
+  let style = document.getElementById(COMPACT_STYLE_ID)
+  if (on) {
+    if (!style) {
+      style = document.createElement('style')
+      style.id = COMPACT_STYLE_ID
+      style.textContent = COMPACT_LAYOUT_CSS
+      document.head.appendChild(style)
+    }
+    root.dataset.hermesLiquidGlassLayout = 'compact'
+  } else {
+    style?.remove()
+    delete root.dataset.hermesLiquidGlassLayout
+  }
+}
+
+function setCompactLayout(on) {
+  try {
+    localStorage.setItem(COMPACT_LAYOUT_KEY, on ? '1' : '0')
+  } catch {
+    /* ignore */
+  }
+  applyCompactLayout(on)
+}
 
 function readAuto() {
   try {
@@ -190,6 +284,9 @@ function installTheme(theme, { activate }) {
       /* ignore */
     }
     paintSeeds(theme)
+    // ThemeProvider and live pywal painting may rewrite root styles; restore the
+    // opt-in layout marker/style without reloading the Desktop window.
+    applyCompactLayout()
   }
 
   return clean
@@ -328,6 +425,25 @@ export default {
       }
     })
 
+    ctx.register({
+      id: `${ID}:toggle-compact-layout`,
+      area: PALETTE_AREA,
+      data: {
+        id: `${ID}.toggleCompactLayout`,
+        label: 'Liquid Glass: toggle compact three-column layout',
+        keywords: ['compact', 'layout', 'sidebar', 'density', 'three column'],
+        run: () => {
+          const next = !readCompactLayout()
+          setCompactLayout(next)
+          host.toast?.({
+            title: 'Liquid Glass',
+            message: next ? 'Compact layout ON' : 'Compact layout OFF',
+            tone: 'info'
+          })
+        }
+      }
+    })
+
     let stopped = false
     let lastAppliedHash = ''
     try {
@@ -373,6 +489,7 @@ export default {
     // One-shot knob apply after mount (ThemeProvider may overwrite seeds once).
     const boot = () => {
       try {
+        applyCompactLayout()
         if (localStorage.getItem(SKIN_KEY) !== THEME_NAME) return
         applyGlassKnobs(JSON.parse(localStorage.getItem(GLASS_KNOBS_KEY) || 'null'))
       } catch {
@@ -385,6 +502,7 @@ export default {
       stopped = true
       clearInterval(interval)
       disposeTheme()
+      applyCompactLayout(false)
     }
   }
 }

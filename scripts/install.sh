@@ -77,6 +77,7 @@ Next:
   1. Hermes Desktop → Cmd/Ctrl+K → "Reload desktop plugins"
   2. Settings → Plugins → enable "${PLUGIN_ID}" if needed
   3. Cmd/Ctrl+K → "Liquid Glass: sync from pywal now"
+  4. Optional: Cmd/Ctrl+K → "Liquid Glass: toggle compact three-column layout"
 
 Hyprland frost (Linux):
   Add to ~/.config/hypr/hyprland.conf:
