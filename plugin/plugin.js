@@ -30,54 +30,80 @@ const COMPACT_STYLE_ID = 'hermes-liquid-glass-o8-style'
 const POLL_MS = 4000
 
 // Layout only: every color remains derived from Hermes/pywal variables.
+// These data-slot hooks are the contracts rendered by the current Desktop;
+// older #app-sidebar / #chat-side-panel ids do not exist there.
 const COMPACT_LAYOUT_CSS = `
 :root[data-hermes-liquid-glass-layout="compact"] {
-  --sidebar-width: 14rem;
-  --sidebar-content-inline-padding: 0.75rem;
-  --o8-compact-radius: 0.25rem;
-}
-@media (min-width: 1024px) {
-  :root[data-hermes-liquid-glass-layout="compact"] #app-sidebar {
-    width: var(--sidebar-width) !important;
-    border-right: 1px solid var(--dt-border) !important;
-  }
-  :root[data-hermes-liquid-glass-layout="compact"] #chat-side-panel {
-    width: 16rem !important;
-    gap: 0.5rem !important;
-    padding-left: 0.5rem;
-    border-left: 1px solid var(--dt-border);
-  }
-  :root[data-hermes-liquid-glass-layout="compact"] #app-sidebar > :first-child {
-    height: 2.75rem !important;
-    padding-inline: 0.75rem !important;
-  }
+  --sidebar-width: 12rem;
+  --sidebar-content-inline-padding: 0.375rem;
+  --o8-compact-radius: 0.1875rem;
+  --composer-surface-pad-x: 0.375rem;
+  --composer-surface-pad-y: 0.25rem;
+  --composer-row-gap: 0.25rem;
 }
 :root[data-hermes-liquid-glass-layout="compact"] body {
   font-size: 0.8125rem;
-  line-height: 1.45;
+  line-height: 1.4;
 }
-:root[data-hermes-liquid-glass-layout="compact"] #app-sidebar nav {
-  padding-block: 0.25rem !important;
+@media (min-width: 720px) {
+  :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
+    flex: 0 0 12rem !important;
+    width: 12rem !important;
+    min-width: 12rem !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar"] {
+    border-right: 1px solid var(--dt-border) !important;
+  }
 }
-:root[data-hermes-liquid-glass-layout="compact"] #app-sidebar nav a,
-:root[data-hermes-liquid-glass-layout="compact"] #app-sidebar nav button {
-  min-height: 2rem;
-  padding-block: 0.25rem !important;
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-content"] {
+  padding-inline: var(--sidebar-content-inline-padding) !important;
+  gap: 0 !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-group"] {
+  min-height: 0 !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-group-content"] {
+  gap: 0 !important;
+  padding-bottom: 0.125rem !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"]) {
+  min-height: 1.375rem !important;
+  height: 1.375rem;
+  border-radius: var(--o8-compact-radius) !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="row-button"] {
+  padding: 0.125rem 0.375rem !important;
+  gap: 0.3125rem !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-root"] {
+  padding-inline: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-surface"] {
+  border-radius: 0.375rem !important;
+  box-shadow: none !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] {
+  padding-inline: 0.75rem !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="profile-rail"] {
+  border-left: 1px solid var(--dt-border);
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, input, textarea, select) {
   border-radius: var(--o8-compact-radius) !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, a) svg {
-  width: 0.9375rem;
-  height: 0.9375rem;
+  width: 0.875rem;
+  height: 0.875rem;
   stroke-width: 1.6;
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(.rounded-lg, .rounded-xl, .rounded-2xl) {
-  border-radius: 0.375rem !important;
+  border-radius: 0.3125rem !important;
 }
-:root[data-hermes-liquid-glass-layout="compact"] :where([aria-current="page"], [data-state="active"]) {
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])[class*="active"],
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])[class*="open"] {
   box-shadow: inset 2px 0 0 var(--dt-ring);
-  background: color-mix(in srgb, var(--dt-primary) 9%, transparent);
+  background: color-mix(in srgb, var(--dt-primary) 11%, transparent) !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(hr, [role="separator"]) {
   border-color: var(--dt-border);

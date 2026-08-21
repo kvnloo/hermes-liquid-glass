@@ -70,9 +70,24 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.equal(env.storage.get('hermes.liquid-glass-wal.compactLayout'), '1')
   assert.equal(env.root.dataset.hermesLiquidGlassLayout, 'compact')
   const style = env.document.getElementById('hermes-liquid-glass-o8-style')
-  assert.ok(style?.textContent.includes('#app-sidebar'))
-  assert.ok(style?.textContent.includes('#chat-side-panel'))
-  assert.ok(style?.textContent.includes('var(--dt-border)'))
+  assert.ok(style)
+
+  // Assert the selector contracts observed in the current Hermes Desktop DOM,
+  // and the behavior each rule supplies—not just arbitrary source substrings.
+  const rules = [...style.textContent.matchAll(/([^{}]+)\{([^{}]+)\}/g)]
+    .map(([, selector, declarations]) => ({ selector: selector.trim(), declarations }))
+  const ruleFor = selector => rules.find(rule => rule.selector.split(',').map(s => s.trim()).includes(selector))
+  const rootPrefix = ':root[data-hermes-liquid-glass-layout="compact"] '
+  const sessionsPane = ruleFor(`${rootPrefix}:has(> [data-tree-group="grp-sessions"])`)
+  assert.match(sessionsPane?.declarations || '', /width:\s*12rem\s*!important/)
+  assert.match(sessionsPane?.declarations || '', /flex:\s*0 0 12rem\s*!important/)
+  const sidebar = ruleFor(`${rootPrefix}[data-slot="sidebar"]`)
+  assert.match(sidebar?.declarations || '', /border-right:\s*1px solid var\(--dt-border\)\s*!important/)
+  const row = ruleFor(`${rootPrefix}[data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])`)
+  assert.match(row?.declarations || '', /height:\s*1\.375rem/)
+  assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /box-shadow:\s*none\s*!important/)
+  assert.match(ruleFor(`${rootPrefix}[data-slot="aui_thread-content"]`)?.declarations || '', /padding-inline:\s*0\.75rem\s*!important/)
+  assert.doesNotMatch(style.textContent, /#app-sidebar|#chat-side-panel/)
 
   env.dispose()
   assert.equal(env.document.getElementById('hermes-liquid-glass-o8-style'), null)
