@@ -263,7 +263,9 @@ export default {
   id: ID,
   name: 'Liquid Glass (pywal)',
   description: 'Pywal + Hyprland liquid glass theme for Hermes Desktop.',
-  defaultEnabled: true,
+  // Unified packages discovered through `hermes plugins install` must remain
+  // inert until the user explicitly enables their Desktop half.
+  defaultEnabled: false,
   register(ctx) {
     let disposeTheme = () => {}
     let lastPublishedHash = ''

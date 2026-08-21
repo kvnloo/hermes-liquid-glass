@@ -11,7 +11,7 @@ There is **no Hermes Desktop plugin marketplace** / central plugin store yet.
 | Disk install into `$HERMES_HOME/desktop-plugins/<id>/` | **Canonical** |
 | Settings → Plugins (enable / disable / open folder) | Manage only |
 | VS Code Marketplace in Desktop | **Themes only**, not plugins |
-| `hermes plugins install …` | **CLI/gateway** plugins, not Desktop UI |
+| `hermes plugins install …` | Unified package install; Desktop half inventories locally |
 | Nous Discord `#plugins-skills-and-skins` | Community discovery |
 | Upstream monorepo bundle | Rare; core stays uncluttered |
 
@@ -93,5 +93,5 @@ Repo is listed under product · agent tooling when present in year data + hierar
 ## What not to do
 
 - Do not publish real session content in trailers
-- Do not claim Marketplace / `hermes plugins install` support for this Desktop plugin
+- Do not claim a Desktop-native marketplace; the community index is a CLI surface
 - Do not `location.reload()` on a timer inside the plugin
