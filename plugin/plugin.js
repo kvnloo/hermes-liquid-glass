@@ -34,25 +34,36 @@ const POLL_MS = 4000
 // older #app-sidebar / #chat-side-panel ids do not exist there.
 const COMPACT_LAYOUT_CSS = `
 :root[data-hermes-liquid-glass-layout="compact"] {
-  --sidebar-width: 12rem;
-  --sidebar-content-inline-padding: 0.375rem;
-  --o8-compact-radius: 0.1875rem;
-  --composer-surface-pad-x: 0.375rem;
-  --composer-surface-pad-y: 0.25rem;
+  --sidebar-width: 15.375rem;
+  --sidebar-content-inline-padding: 0.625rem;
+  --o8-compact-radius: 0.25rem;
+  --composer-surface-pad-x: 0.625rem;
+  --composer-surface-pad-y: 0.375rem;
   --composer-row-gap: 0.25rem;
 }
 :root[data-hermes-liquid-glass-layout="compact"] body {
   font-size: 0.8125rem;
-  line-height: 1.4;
+  line-height: 1.42;
+  letter-spacing: -0.008em;
 }
 @media (min-width: 720px) {
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
-    flex: 0 0 12rem !important;
-    width: 12rem !important;
-    min-width: 12rem !important;
+    flex: 0 0 15.375rem !important;
+    width: 15.375rem !important;
+    min-width: 15.375rem !important;
   }
-  :root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar"] {
-    border-right: 1px solid var(--dt-border) !important;
+  :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-review"]):not([style*="display: none"]) {
+    flex: 0 0 22.5rem !important;
+    width: 22.5rem !important;
+    min-width: 22.5rem !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-sessions"],
+  :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] {
+    border-right: 1px solid color-mix(in srgb, var(--dt-border) 74%, transparent) !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] {
+    border-right: 0 !important;
+    border-left: 1px solid color-mix(in srgb, var(--dt-border) 74%, transparent) !important;
   }
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-content"] {
@@ -61,33 +72,53 @@ const COMPACT_LAYOUT_CSS = `
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-group"] {
   min-height: 0 !important;
+  padding-block: 0.1875rem !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-group-content"] {
   gap: 0 !important;
   padding-bottom: 0.125rem !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"]) {
-  min-height: 1.375rem !important;
-  height: 1.375rem;
+  min-height: 1.625rem !important;
+  height: 1.625rem;
   border-radius: var(--o8-compact-radius) !important;
+  border: 1px solid transparent;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="row-button"] {
-  padding: 0.125rem 0.375rem !important;
-  gap: 0.3125rem !important;
+  padding: 0.1875rem 0.375rem !important;
+  gap: 0.375rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 450;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-root"] {
-  padding-inline: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
+  padding-inline: 0.875rem !important;
+  padding-bottom: 0.75rem !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-surface"] {
+  min-height: 4.875rem !important;
   border-radius: 0.375rem !important;
-  box-shadow: none !important;
+  border: 1px solid color-mix(in srgb, var(--dt-border) 82%, transparent) !important;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 4%, transparent) inset !important;
+  background: color-mix(in srgb, var(--dt-card) 58%, transparent) !important;
+  backdrop-filter: blur(18px) saturate(112%);
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-rich-input"] {
+  min-height: 2.125rem !important;
+  font-size: 0.8125rem !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] {
-  padding-inline: 0.75rem !important;
+  width: min(100%, 58rem) !important;
+  max-width: 58rem !important;
+  padding-inline: 1.25rem !important;
+  margin-inline: auto !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-viewport"] {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--dt-foreground) 18%, transparent) transparent;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="profile-rail"] {
-  border-left: 1px solid var(--dt-border);
+  border-top: 1px solid color-mix(in srgb, var(--dt-border) 68%, transparent);
+  padding-top: 0.25rem;
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, input, textarea, select) {
   border-radius: var(--o8-compact-radius) !important;
@@ -95,19 +126,23 @@ const COMPACT_LAYOUT_CSS = `
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, a) svg {
   width: 0.875rem;
   height: 0.875rem;
-  stroke-width: 1.6;
+  stroke-width: 1.55;
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(.rounded-lg, .rounded-xl, .rounded-2xl) {
-  border-radius: 0.3125rem !important;
+  border-radius: 0.375rem !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"]):hover {
+  background: color-mix(in srgb, var(--dt-foreground) 5%, transparent) !important;
+  border-color: color-mix(in srgb, var(--dt-border) 55%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])[class*="active"],
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])[class*="open"] {
   box-shadow: inset 2px 0 0 var(--dt-ring);
-  background: color-mix(in srgb, var(--dt-primary) 11%, transparent) !important;
+  background: color-mix(in srgb, var(--dt-primary) 10%, transparent) !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(hr, [role="separator"]) {
   border-color: var(--dt-border);
-  opacity: 0.72;
+  opacity: 0.62;
 }
 `
 
