@@ -27,6 +27,7 @@ const LAST_HASH_KEY = 'hermes.liquid-glass-wal.lastHash'
 const PATH_CACHE_KEY = 'hermes.liquid-glass-wal.themePath'
 const COMPACT_LAYOUT_KEY = 'hermes.liquid-glass-wal.compactLayout'
 const COMPACT_STYLE_ID = 'hermes-liquid-glass-o8-style'
+const MOBILE_BACK_ID = 'hermes-liquid-glass-o8-back'
 const POLL_MS = 4000
 
 // Layout only: every color remains derived from Hermes/pywal variables.
@@ -297,6 +298,20 @@ const COMPACT_LAYOUT_CSS = `
     width: 100% !important;
     min-width: 0 !important;
   }
+  :root[data-hermes-liquid-glass-layout="compact"] #hermes-liquid-glass-o8-back {
+    order: -1;
+    gap: 0.25rem;
+    min-width: 2.75rem;
+    padding-inline: 0.375rem;
+    color: inherit;
+    background: color-mix(in srgb, var(--dt-foreground) 5%, transparent);
+    border-color: color-mix(in srgb, var(--dt-border) 48%, transparent);
+  }
+}
+@media (min-width: 521px) {
+  :root[data-hermes-liquid-glass-layout="compact"] #hermes-liquid-glass-o8-back {
+    display: none !important;
+  }
 }
 @media (max-width: 380px) {
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
@@ -471,6 +486,69 @@ function setCompactLayout(on) {
     /* ignore */
   }
   applyCompactLayout(on)
+  if (typeof Event === 'function') window.dispatchEvent?.(new Event('hermes-liquid-glass-layout-change'))
+}
+
+function installMobilePaneController() {
+  if (typeof document === 'undefined' || typeof window === 'undefined' || typeof document.addEventListener !== 'function') return () => {}
+  const root = document.documentElement
+  let returnFocus = null
+
+  const isPhone = () => root.dataset.hermesLiquidGlassLayout === 'compact' && window.matchMedia?.('(max-width: 520px)').matches === true
+  const sessionsPane = () => document.querySelector(':has(> [data-tree-group="grp-sessions"])')
+  const conversationPane = () => document.querySelector(':has(> [data-slot="aui_thread-content"])')
+  const removeBack = () => document.getElementById(MOBILE_BACK_ID)?.remove()
+  const showSessions = () => {
+    root.dataset.o8MobilePane = 'sessions'
+    removeBack()
+    queueMicrotask(() => returnFocus?.focus?.({ preventScroll: true }))
+  }
+  const syncBack = () => {
+    if (!isPhone() || root.dataset.o8MobilePane !== 'conversation') {
+      removeBack()
+      return
+    }
+    const header = conversationPane()?.querySelector(':scope > header')
+    if (!header || document.getElementById(MOBILE_BACK_ID)) return
+    const button = document.createElement('button')
+    button.id = MOBILE_BACK_ID
+    button.type = 'button'
+    button.setAttribute('aria-label', 'Back to sessions')
+    button.textContent = '‹ Back'
+    button.addEventListener('click', showSessions)
+    header.prepend(button)
+  }
+  const syncViewport = () => {
+    if (!isPhone()) {
+      delete root.dataset.o8MobilePane
+      removeBack()
+      return
+    }
+    if (!root.dataset.o8MobilePane) root.dataset.o8MobilePane = 'sessions'
+    syncBack()
+  }
+  const onClick = event => {
+    if (!isPhone()) return
+    const row = event.target?.closest?.('[data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])')
+    if (!row || !sessionsPane()?.contains(row)) return
+    returnFocus = row.querySelector('[data-slot="row-button"]') || row
+    root.dataset.o8MobilePane = 'conversation'
+    syncBack()
+    queueMicrotask(() => conversationPane()?.querySelector('[data-slot="composer-rich-input"]')?.focus?.({ preventScroll: true }))
+  }
+  const media = window.matchMedia?.('(max-width: 520px)')
+  document.addEventListener('click', onClick)
+  media?.addEventListener?.('change', syncViewport)
+  window.addEventListener?.('hermes-liquid-glass-layout-change', syncViewport)
+  syncViewport()
+
+  return () => {
+    document.removeEventListener('click', onClick)
+    media?.removeEventListener?.('change', syncViewport)
+    window.removeEventListener?.('hermes-liquid-glass-layout-change', syncViewport)
+    removeBack()
+    delete root.dataset.o8MobilePane
+  }
 }
 
 function readAuto() {
@@ -675,6 +753,8 @@ export default {
   // inert until the user explicitly enables their Desktop half.
   defaultEnabled: false,
   register(ctx) {
+    applyCompactLayout()
+    const disposeMobilePane = installMobilePaneController()
     let disposeTheme = () => {}
     let lastPublishedHash = ''
     let contributed = {
@@ -855,6 +935,7 @@ export default {
       clearInterval(interval)
       disposeTheme()
       applyCompactLayout(false)
+      disposeMobilePane()
     }
   }
 }

@@ -62,6 +62,7 @@ async function loadPlugin({ stored = {}, theme = null } = {}) {
 }
 
 test('compact variant is opt-in, persists state, and cleans up its style', async () => {
+  const pluginSource = await readFile(SOURCE, 'utf8')
   const env = await loadPlugin()
   assert.equal(env.root.dataset.hermesLiquidGlassLayout, undefined)
   assert.equal(env.document.getElementById('hermes-liquid-glass-o8-style'), null)
@@ -142,6 +143,7 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
     'keyboard focus needs a visible adjacent halo')
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /box-shadow:[^;]+inset[^;]+,/)
   assert.match(style.textContent, /data-o8-mobile-pane="conversation"[\s\S]*grp-sessions[\s\S]*display:\s*none\s*!important/)
+  assert.match(style.textContent, /#hermes-liquid-glass-o8-back/)
   assert.match(style.textContent, /:where\(\[aria-current="true"\], \[aria-selected="true"\], \[data-state="selected"\]\)/)
   assert.match(style.textContent, /:where\(\[data-unread="true"\], \[data-status="unread"\]\)[^\{]*::after/)
   assert.match(style.textContent, /\[data-slot="composer-surface"\] :where\(\[data-slot="composer-send"\], button\[type="submit"\]\)/)
@@ -149,6 +151,14 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(style.textContent, /:where\(\[data-empty="true"\], \[data-state="empty"\]\)/)
   assert.match(style.textContent, /@media \(prefers-reduced-motion: reduce\)/)
   assert.doesNotMatch(style.textContent, /#app-sidebar|#chat-side-panel/)
+  assert.match(pluginSource, /root\.dataset\.o8MobilePane = 'sessions'/,
+    'phone layout must begin with one product-owned pane rather than a permanent rail')
+  assert.match(pluginSource, /root\.dataset\.o8MobilePane = 'conversation'/,
+    'session activation must transfer phone ownership to the conversation')
+  assert.match(pluginSource, /aria-label', 'Back to sessions'/,
+    'phone conversation needs an accessible contextual Back control')
+  assert.match(pluginSource, /returnFocus\?\.focus\?\./,
+    'Back must restore focus to the session that opened the conversation')
 
   env.dispose()
   assert.equal(env.document.getElementById('hermes-liquid-glass-o8-style'), null)
