@@ -171,6 +171,26 @@ const COMPACT_LAYOUT_CSS = `
   padding-inline: 1.25rem !important;
   margin-inline: auto !important;
 }
+@media (max-width: 719px) {
+  :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
+    flex: 0 0 12rem !important;
+    width: 12rem !important;
+    min-width: 12rem !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-review"]):not([style*="display: none"]) {
+    position: absolute !important;
+    z-index: 20;
+    inset: var(--o8-pane-header-height) 0 0 12rem;
+    width: auto !important;
+    max-width: calc(100vw - 12rem) !important;
+    min-width: 0 !important;
+    background: var(--dt-background, var(--background)) !important;
+    box-shadow: -18px 0 48px color-mix(in srgb, var(--dt-background, var(--background)) 52%, transparent);
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] {
+    padding-inline: 0.75rem !important;
+  }
+}
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(p, div) {
   padding-block: 0.4375rem;
   border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 38%, transparent);
@@ -195,7 +215,7 @@ const COMPACT_LAYOUT_CSS = `
   margin-block: 0.375rem !important;
   line-height: 1.28 !important;
 }
-:root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] > :where(div, section, article) {
+:root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] > :where(div, section, article):not(:has(> :where(div, section, article))) {
   min-height: 2.5rem;
   padding-block: 0.375rem !important;
   border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 44%, transparent);

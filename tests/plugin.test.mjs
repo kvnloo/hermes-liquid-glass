@@ -97,7 +97,13 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(style.textContent, /\[data-tree-group="grp-review"\]\s*\{[^}]*border-right:\s*0[^}]*padding:\s*0\.5rem 0\.75rem/)
   assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(p, div\)\s*\{[^}]*padding-block:\s*0\.4375rem/)
   assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(section, article, \[data-message-id\]\)\s*\{[^}]*padding-block:\s*0\.4375rem/)
-  assert.match(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\)\s*\{[^}]*min-height:\s*2\.5rem[^}]*border-bottom:/)
+  assert.doesNotMatch(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\)\s*\{/,
+    'review styling must not flatten every direct container')
+  assert.match(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\):not\(:has\(> :where\(div, section, article\)\)\)\s*\{[^}]*min-height:\s*2\.5rem[^}]*border-bottom:/)
+  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-sessions[\s\S]*width:\s*12rem\s*!important/)
+  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-review[\s\S]*position:\s*absolute\s*!important/)
+  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*inset:\s*var\(--o8-pane-header-height\) 0 0 12rem/)
+  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*max-width:\s*calc\(100vw - 12rem\)\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /box-shadow:[^;]+inset[^;]+,/)
   assert.doesNotMatch(style.textContent, /#app-sidebar|#chat-side-panel/)
 
