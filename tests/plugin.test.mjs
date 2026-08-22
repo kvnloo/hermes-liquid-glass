@@ -156,14 +156,18 @@ test('real browser preserves nested inspector structure and responsive conversat
   </script></body></html>`
   await writeFile(fixture, html)
   const render = width => {
-    const dumped = execFileSync('chromium', ['--headless=new', '--ozone-platform=headless', '--no-sandbox', `--user-data-dir=${join(dir, `profile-${width}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=500', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
-    const raw = dumped.match(/<pre id="result">([^<]+)<\/pre>/)?.[1]
-    assert.ok(raw, `rendered result missing at ${width}px`)
-    return JSON.parse(raw.replaceAll('&quot;', '"').replaceAll('&amp;', '&'))
+    let result = null
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      const dumped = execFileSync('chromium', ['--headless=new', '--ozone-platform=headless', '--no-sandbox', '--disable-dev-shm-usage', `--user-data-dir=${join(dir, `profile-${width}-${attempt}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=500', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
+      const raw = dumped.match(/<pre id="result">([^<]+)<\/pre>/)?.[1]
+      assert.ok(raw, `rendered result missing at ${width}px on attempt ${attempt}`)
+      result = JSON.parse(raw.replaceAll('&quot;', '"').replaceAll('&amp;', '&'))
+      if (result.viewport[0] > 0 && result.viewport[1] > 0) return result
+    }
+    assert.fail(`viewport not initialized at ${width}px after 3 attempts: ${JSON.stringify(result)}`)
   }
   try {
     const wide = render(1440)
-    assert.ok(wide.viewport[0] > 0 && wide.viewport[1] > 0, `wide viewport not initialized: ${JSON.stringify(wide)}`)
     assert.deepEqual(wide.scroll, wide.viewport, 'wide fixture must not overflow')
     const sessionsRatio = wide.sessions.width / wide.viewport[0]
     const chatRatio = wide.chat.width / wide.viewport[0]
