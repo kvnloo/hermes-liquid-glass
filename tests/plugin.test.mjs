@@ -131,8 +131,10 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(style.textContent, /:where\(button:disabled, \[aria-disabled="true"\], \[data-disabled\]\)/)
   assert.match(style.textContent, /:where\(\[aria-invalid="true"\], \[data-state="error"\], \[data-status="error"\]\)/)
   assert.match(style.textContent, /--o8-motion:\s*180ms cubic-bezier\(0\.32, 0\.72, 0, 1\)/)
+  assert.match(style.textContent, /@media \(max-width: 900px\)[\s\S]*grp-review[\s\S]*display:\s*none\s*!important/)
   assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-sessions[\s\S]*width:\s*12rem\s*!important/)
-  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-review[\s\S]*display:\s*none\s*!important/)
+  assert.match(style.textContent, /@media \(max-width: 520px\)[\s\S]*grp-sessions[\s\S]*width:\s*8\.5rem\s*!important/)
+  assert.match(style.textContent, /@media \(max-width: 380px\)[\s\S]*grp-sessions[\s\S]*width:\s*7rem\s*!important/)
   assert.match(style.textContent, /:where\(input, textarea, select, \[contenteditable="true"\]\):focus-visible/)
   assert.match(style.textContent, /outline:\s*2px solid color-mix\(in srgb, var\(--dt-ring\) 88%, transparent\)\s*!important/,
     'keyboard focus needs an unmistakable two-pixel perimeter')
@@ -205,6 +207,18 @@ test('real browser preserves nested inspector structure and responsive conversat
     assert.ok(narrow.sessions.width >= 191 && narrow.sessions.width <= 193)
     assert.ok(narrow.chat.width >= 507)
     assert.ok(narrow.composer.bottom <= narrow.viewport[1] && narrow.composer.height >= 62, 'composer remains visible and usable')
+
+    const tablet = render(900)
+    assert.deepEqual(tablet.scroll, tablet.viewport, 'tablet fixture must not overflow')
+    assert.equal(tablet.review.display, 'none', 'tablet state must prioritize the conversation over a cramped inspector')
+    assert.ok(tablet.chat.width >= 675, 'tablet conversation keeps at least 75% of the viewport')
+
+    const phone = render(430)
+    assert.deepEqual(phone.scroll, phone.viewport, 'phone fixture must not overflow')
+    assert.equal(phone.review.display, 'none', 'phone inspector stays hidden')
+    assert.ok(phone.sessions.width >= 135 && phone.sessions.width <= 137)
+    assert.ok(phone.chat.width >= 293, 'phone conversation retains a usable primary reading column')
+
   } finally {
     await rm(dir, { recursive: true, force: true })
     env.dispose()

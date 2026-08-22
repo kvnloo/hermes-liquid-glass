@@ -135,6 +135,11 @@ const COMPACT_LAYOUT_CSS = `
     min-width: 18rem !important;
   }
 }
+@media (max-width: 900px) {
+  :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-review"]):not([style*="display: none"]) {
+    display: none !important;
+  }
+}
 :root[data-hermes-liquid-glass-layout="compact"] [data-tree-tab] {
   min-height: 1.75rem !important;
   border-radius: var(--o8-compact-radius) !important;
@@ -229,6 +234,32 @@ const COMPACT_LAYOUT_CSS = `
   }
   :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-root"] {
     padding-inline: 0.5rem !important;
+  }
+}
+@media (max-width: 520px) {
+  :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
+    flex: 0 0 8.5rem !important;
+    width: 8.5rem !important;
+    min-width: 8.5rem !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] :where(:has(> [data-tree-group="grp-sessions"]), :has(> [data-slot="aui_thread-content"])) > header > :where(span, small) {
+    display: none !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] {
+    padding-inline: 0.5rem !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(section, article, [data-message-id]):nth-child(even) {
+    margin-left: 0.375rem !important;
+  }
+}
+@media (max-width: 380px) {
+  :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
+    flex-basis: 7rem !important;
+    width: 7rem !important;
+    min-width: 7rem !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-content"] {
+    padding-inline: 0.25rem !important;
   }
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(p, div) {
