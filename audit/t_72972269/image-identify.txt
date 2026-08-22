@@ -1,0 +1,10 @@
+audit/t_72972269/screenshots/baseline-populated-1440x900.png PNG 1440x900 1440x900+0+0 8-bit sRGB 697984B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-empty-1440x900.png PNG 1440x900 1440x900+0+0 8-bit sRGB 562748B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-empty-430x932.png PNG 430x932 430x932+0+0 8-bit sRGB 222721B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-focus-1440x900.png PNG 1440x900 1440x900+0+0 8-bit sRGB 690994B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-hover-1440x900.png PNG 1440x900 1440x900+0+0 8-bit sRGB 691423B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-populated-1040x900.png PNG 1040x900 1040x900+0+0 8-bit sRGB 558971B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-populated-1440x900.png PNG 1440x900 1440x900+0+0 8-bit sRGB 691445B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-populated-1896x979.png PNG 1896x979 1896x979+0+0 8-bit sRGB 863932B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-populated-430x932.png PNG 430x932 430x932+0+0 8-bit sRGB 298572B 0.000u 0:00.000
+audit/t_72972269/screenshots/candidate-populated-700x900.png PNG 700x900 700x900+0+0 8-bit sRGB 421110B 0.000u 0:00.000

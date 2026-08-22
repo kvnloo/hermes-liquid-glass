@@ -1,0 +1,13 @@
+task=t_72972269
+branch=feat/o8-ui
+revision=5da806b6822517e4a86a157987395240c8ba100c
+capture=isolated headless Chromium synthetic renderer
+cdp=127.0.0.1:9527
+runtime=/tmp/hermes-liquid-glass-t_72972269
+fixture_counts=sessions:24,messages:10,review:17
+dpr=1
+palette=#111821,#18232d,#e5eef2,#536575,#78c7d8
+plugin_sha256=0665783f5784b45d233e112414e2341a315135d1de65cc5bbfc236cd6bd1d288
+harness_sha256=63afff421030d86e84cae5988e187d2bcc2da72eb20537649963cd73e9ca24a6
+load_verifier_sha256=4d8442ee43d573b1abdb3ca4dd9f66edea997b10be2129f5e4cbfa794191d743
+live_desktop_touched=false

@@ -1,0 +1,577 @@
+{
+  "revision": "5da806b6822517e4a86a157987395240c8ba100c",
+  "fixture": "deterministic synthetic data only",
+  "cdpPort": 9527,
+  "results": {
+    "populatedReference": {
+      "viewport": [
+        1896,
+        979
+      ],
+      "scroll": [
+        1896,
+        979
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 341.265625,
+        "height": 979,
+        "top": 0,
+        "right": 341.265625,
+        "bottom": 979,
+        "left": 0
+      },
+      "chat": {
+        "x": 341.265625,
+        "y": 0,
+        "width": 1138.734375,
+        "height": 979,
+        "top": 0,
+        "right": 1480,
+        "bottom": 979,
+        "left": 341.265625
+      },
+      "review": {
+        "x": 1480,
+        "y": 0,
+        "width": 416,
+        "height": 979,
+        "top": 0,
+        "right": 1896,
+        "bottom": 979,
+        "left": 1480,
+        "display": "flex"
+      },
+      "composer": {
+        "x": 365.265625,
+        "y": 875,
+        "width": 1090.734375,
+        "height": 84,
+        "top": 875,
+        "right": 1456,
+        "bottom": 959,
+        "left": 365.265625
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "populatedWide": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "scroll": [
+        1440,
+        900
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 259.1875,
+        "height": 900,
+        "top": 0,
+        "right": 259.1875,
+        "bottom": 900,
+        "left": 0
+      },
+      "chat": {
+        "x": 259.1875,
+        "y": 0,
+        "width": 860.8125,
+        "height": 900,
+        "top": 0,
+        "right": 1120,
+        "bottom": 900,
+        "left": 259.1875
+      },
+      "review": {
+        "x": 1120,
+        "y": 0,
+        "width": 320,
+        "height": 900,
+        "top": 0,
+        "right": 1440,
+        "bottom": 900,
+        "left": 1120,
+        "display": "flex"
+      },
+      "composer": {
+        "x": 280.78125,
+        "y": 798.734375,
+        "width": 817.625,
+        "height": 84,
+        "top": 798.734375,
+        "right": 1098.40625,
+        "bottom": 882.734375,
+        "left": 280.78125
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "populatedMedium": {
+      "viewport": [
+        1040,
+        900
+      ],
+      "scroll": [
+        1040,
+        900
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 224,
+        "height": 900,
+        "top": 0,
+        "right": 224,
+        "bottom": 900,
+        "left": 0
+      },
+      "chat": {
+        "x": 224,
+        "y": 0,
+        "width": 528,
+        "height": 900,
+        "top": 0,
+        "right": 752,
+        "bottom": 900,
+        "left": 224
+      },
+      "review": {
+        "x": 752,
+        "y": 0,
+        "width": 288,
+        "height": 900,
+        "top": 0,
+        "right": 1040,
+        "bottom": 900,
+        "left": 752,
+        "display": "flex"
+      },
+      "composer": {
+        "x": 240,
+        "y": 803.53125,
+        "width": 496,
+        "height": 84,
+        "top": 803.53125,
+        "right": 736,
+        "bottom": 887.53125,
+        "left": 240
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "populatedNarrow": {
+      "viewport": [
+        700,
+        900
+      ],
+      "scroll": [
+        700,
+        900
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 192,
+        "height": 900,
+        "top": 0,
+        "right": 192,
+        "bottom": 900,
+        "left": 0
+      },
+      "chat": {
+        "x": 192,
+        "y": 0,
+        "width": 508,
+        "height": 900,
+        "top": 0,
+        "right": 700,
+        "bottom": 900,
+        "left": 192
+      },
+      "review": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0,
+        "display": "none"
+      },
+      "composer": {
+        "x": 200,
+        "y": 804,
+        "width": 492,
+        "height": 84,
+        "top": 804,
+        "right": 692,
+        "bottom": 888,
+        "left": 200
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "populatedPhone": {
+      "viewport": [
+        430,
+        932
+      ],
+      "scroll": [
+        430,
+        932
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 136,
+        "height": 932,
+        "top": 0,
+        "right": 136,
+        "bottom": 932,
+        "left": 0
+      },
+      "chat": {
+        "x": 136,
+        "y": 0,
+        "width": 294,
+        "height": 932,
+        "top": 0,
+        "right": 430,
+        "bottom": 932,
+        "left": 136
+      },
+      "review": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0,
+        "display": "none"
+      },
+      "composer": {
+        "x": 144,
+        "y": 836,
+        "width": 278,
+        "height": 84,
+        "top": 836,
+        "right": 422,
+        "bottom": 920,
+        "left": 144
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "emptyWide": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "scroll": [
+        1440,
+        900
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 259.1875,
+        "height": 900,
+        "top": 0,
+        "right": 259.1875,
+        "bottom": 900,
+        "left": 0
+      },
+      "chat": {
+        "x": 259.1875,
+        "y": 0,
+        "width": 860.8125,
+        "height": 900,
+        "top": 0,
+        "right": 1120,
+        "bottom": 900,
+        "left": 259.1875
+      },
+      "review": {
+        "x": 1120,
+        "y": 0,
+        "width": 320,
+        "height": 900,
+        "top": 0,
+        "right": 1440,
+        "bottom": 900,
+        "left": 1120,
+        "display": "flex"
+      },
+      "composer": {
+        "x": 280.78125,
+        "y": 798.734375,
+        "width": 817.625,
+        "height": 84,
+        "top": 798.734375,
+        "right": 1098.40625,
+        "bottom": 882.734375,
+        "left": 280.78125
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "emptyPhone": {
+      "viewport": [
+        430,
+        932
+      ],
+      "scroll": [
+        430,
+        932
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 136,
+        "height": 932,
+        "top": 0,
+        "right": 136,
+        "bottom": 932,
+        "left": 0
+      },
+      "chat": {
+        "x": 136,
+        "y": 0,
+        "width": 294,
+        "height": 932,
+        "top": 0,
+        "right": 430,
+        "bottom": 932,
+        "left": 136
+      },
+      "review": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0,
+        "display": "none"
+      },
+      "composer": {
+        "x": 144,
+        "y": 836,
+        "width": 278,
+        "height": 84,
+        "top": 836,
+        "right": 422,
+        "bottom": 920,
+        "left": 144
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "hover": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "scroll": [
+        1440,
+        900
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 259.1875,
+        "height": 900,
+        "top": 0,
+        "right": 259.1875,
+        "bottom": 900,
+        "left": 0
+      },
+      "chat": {
+        "x": 259.1875,
+        "y": 0,
+        "width": 860.8125,
+        "height": 900,
+        "top": 0,
+        "right": 1120,
+        "bottom": 900,
+        "left": 259.1875
+      },
+      "review": {
+        "x": 1120,
+        "y": 0,
+        "width": 320,
+        "height": 900,
+        "top": 0,
+        "right": 1440,
+        "bottom": 900,
+        "left": 1120,
+        "display": "flex"
+      },
+      "composer": {
+        "x": 280.78125,
+        "y": 798.734375,
+        "width": 817.625,
+        "height": 84,
+        "top": 798.734375,
+        "right": 1098.40625,
+        "bottom": 882.734375,
+        "left": 280.78125
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "focus": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "scroll": [
+        1440,
+        900
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 259.1875,
+        "height": 900,
+        "top": 0,
+        "right": 259.1875,
+        "bottom": 900,
+        "left": 0
+      },
+      "chat": {
+        "x": 259.1875,
+        "y": 0,
+        "width": 860.8125,
+        "height": 900,
+        "top": 0,
+        "right": 1120,
+        "bottom": 900,
+        "left": 259.1875
+      },
+      "review": {
+        "x": 1120,
+        "y": 0,
+        "width": 320,
+        "height": 900,
+        "top": 0,
+        "right": 1440,
+        "bottom": 900,
+        "left": 1120,
+        "display": "flex"
+      },
+      "composer": {
+        "x": 280.78125,
+        "y": 798.734375,
+        "width": 817.625,
+        "height": 84,
+        "top": 798.734375,
+        "right": 1098.40625,
+        "bottom": 882.734375,
+        "left": 280.78125
+      },
+      "focus": "composer-rich-input",
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    },
+    "baseline": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "scroll": [
+        1440,
+        900
+      ],
+      "sessions": {
+        "x": 0,
+        "y": 0,
+        "width": 256,
+        "height": 900,
+        "top": 0,
+        "right": 256,
+        "bottom": 900,
+        "left": 0
+      },
+      "chat": {
+        "x": 256,
+        "y": 0,
+        "width": 800,
+        "height": 900,
+        "top": 0,
+        "right": 1056,
+        "bottom": 900,
+        "left": 256
+      },
+      "review": {
+        "x": 1056,
+        "y": 0,
+        "width": 384,
+        "height": 900,
+        "top": 0,
+        "right": 1440,
+        "bottom": 900,
+        "left": 1056,
+        "display": "flex"
+      },
+      "composer": {
+        "x": 256,
+        "y": 819,
+        "width": 800,
+        "height": 81,
+        "top": 819,
+        "right": 1056,
+        "bottom": 900,
+        "left": 256
+      },
+      "focus": null,
+      "counts": {
+        "sessions": 24,
+        "messages": 10,
+        "review": 17
+      }
+    }
+  }
+}
