@@ -92,6 +92,11 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /color:\s*var\(--dt-foreground,\s*var\(--foreground\)\)\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="aui_thread-content"]`)?.declarations || '', /max-width:\s*58rem\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="sidebar-group-label"]`)?.declarations || '', /font-size:\s*0\.625rem\s*!important/)
+  assert.match(ruleFor(`${rootPrefix}:has(> [data-tree-group="grp-sessions"])`)?.declarations || '', /backdrop-filter:\s*blur\(28px\) saturate\(118%\)/)
+  assert.match(ruleFor(`${rootPrefix}:has(> [data-tree-group="grp-review"]):not([style*="display: none"])`)?.declarations || '', /background:\s*linear-gradient/)
+  assert.match(style.textContent, /\[data-tree-group="grp-review"\]\s*\{[^}]*border-right:\s*0[^}]*padding:\s*0\.5rem 0\.75rem/)
+  assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(p, div\)\s*\{[^}]*padding-block:\s*0\.625rem/)
+  assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /box-shadow:[^;]+inset[^;]+,/)
   assert.doesNotMatch(style.textContent, /#app-sidebar|#chat-side-panel/)
 
   env.dispose()

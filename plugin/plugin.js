@@ -52,11 +52,15 @@ const COMPACT_LAYOUT_CSS = `
     flex: 0 0 16rem !important;
     width: 16rem !important;
     min-width: 16rem !important;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 44%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 64%, transparent)) !important;
+    backdrop-filter: blur(28px) saturate(118%);
   }
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-review"]):not([style*="display: none"]) {
     flex: 0 0 clamp(20rem, 27vw, 25rem) !important;
     width: clamp(20rem, 27vw, 25rem) !important;
     min-width: 20rem !important;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 38%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 70%, transparent)) !important;
+    backdrop-filter: blur(30px) saturate(116%);
   }
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-sessions"],
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] {
@@ -65,6 +69,7 @@ const COMPACT_LAYOUT_CSS = `
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] {
     border-right: 0 !important;
     border-left: 1px solid color-mix(in srgb, var(--dt-border) 74%, transparent) !important;
+    padding: 0.5rem 0.75rem;
   }
 }
 @media (min-width: 1680px) {
@@ -132,8 +137,8 @@ const COMPACT_LAYOUT_CSS = `
   min-height: 4.5rem !important;
   border-radius: 0.5rem !important;
   border: 1px solid color-mix(in srgb, var(--dt-border) 82%, transparent) !important;
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 4%, transparent) inset !important;
-  background: color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 72%, transparent) !important;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 9%, transparent) inset, 0 14px 42px color-mix(in srgb, var(--dt-background, var(--background)) 38%, transparent), 0 0 0 1px color-mix(in srgb, var(--dt-foreground) 2%, transparent) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 62%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 52%, transparent)) !important;
   color: var(--dt-foreground, var(--foreground)) !important;
   backdrop-filter: blur(18px) saturate(112%);
 }
@@ -151,6 +156,10 @@ const COMPACT_LAYOUT_CSS = `
   max-width: 58rem !important;
   padding-inline: 1.25rem !important;
   margin-inline: auto !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(p, div) {
+  padding-block: 0.625rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 38%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-viewport"] {
   scrollbar-width: thin;
