@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import vm from 'node:vm'
-import { readFile } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 
 const SOURCE = new URL('../plugin/plugin.js', import.meta.url)
 
@@ -101,9 +104,8 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
     'review styling must not flatten every direct container')
   assert.match(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\):not\(:has\(> :where\(div, section, article\)\)\)\s*\{[^}]*min-height:\s*2\.5rem[^}]*border-bottom:/)
   assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-sessions[\s\S]*width:\s*12rem\s*!important/)
-  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-review[\s\S]*position:\s*absolute\s*!important/)
-  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*inset:\s*var\(--o8-pane-header-height\) 0 0 12rem/)
-  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*max-width:\s*calc\(100vw - 12rem\)\s*!important/)
+  assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-review[\s\S]*display:\s*none\s*!important/)
+  assert.match(style.textContent, /:where\(input, textarea, select, \[contenteditable="true"\]\):focus-visible/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /box-shadow:[^;]+inset[^;]+,/)
   assert.doesNotMatch(style.textContent, /#app-sidebar|#chat-side-panel/)
 
@@ -125,4 +127,44 @@ test('enabled compact variant survives live pywal poll updates without reload', 
   assert.ok(env.document.getElementById('hermes-liquid-glass-o8-style'))
   assert.equal(env.reloads(), 0, 'poll path must not reload the Desktop window')
   assert.equal(env.storage.get('hermes-desktop-theme-v2'), 'liquid-glass-wal')
+})
+
+test('real browser preserves nested inspector structure and responsive conversation geometry', async () => {
+  const env = await loadPlugin({ stored: { 'hermes.liquid-glass-wal.compactLayout': '1' } })
+  const css = env.document.getElementById('hermes-liquid-glass-o8-style').textContent
+  const dir = await mkdtemp(join(tmpdir(), 'liquid-glass-rendered-'))
+  const fixture = join(dir, 'fixture.html')
+  const html = `<!doctype html><html data-hermes-liquid-glass-layout="compact"><head><meta charset="utf-8"><style>
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}:root{--dt-background:#111827;--background:#111827;--dt-card:#1f2937;--card:#1f2937;--dt-foreground:#f3f4f6;--foreground:#f3f4f6;--dt-border:#475569;--dt-ring:#60a5fa;--dt-primary:#60a5fa}.shell{display:flex;width:100vw;height:100vh}.pane{display:flex;flex-direction:column;min-width:0}.sessions{flex:0 0 16rem}.chat{flex:1 1 auto}.review{flex:0 0 24rem}.thread{flex:1;overflow:auto}.composer{flex:none}.nested{padding:4px}.leaf{padding:4px}
+    ${css}
+  </style></head><body><main class="shell"><section class="pane sessions"><header>Sessions</header><div data-tree-group="grp-sessions"><div data-slot="sidebar-content">Alpha</div></div></section><section class="pane chat"><header>Conversation</header><div class="thread" data-slot="aui_thread-viewport"><div data-slot="aui_thread-content"><article data-message-id="1">Message</article></div></div><div class="composer" data-slot="composer-root"><div data-slot="composer-surface"><textarea data-slot="composer-rich-input">Reply</textarea></div></div></section><section class="pane review"><header>Activity</header><div data-tree-group="grp-review"><section class="nested"><div class="leaf">Nested review row</div></section><article class="direct-leaf">Direct review row</article></div></section></main><pre id="result"></pre><script>
+    {const q=s=>document.querySelector(s),r=e=>e.getBoundingClientRect(),cs=e=>getComputedStyle(e);const out={viewport:[innerWidth,innerHeight],scroll:[document.documentElement.scrollWidth,document.documentElement.scrollHeight],sessions:r(q('.sessions')).toJSON(),chat:r(q('.chat')).toJSON(),review:{...r(q('.review')).toJSON(),display:cs(q('.review')).display},composer:r(q('[data-slot="composer-surface"]')).toJSON(),nested:{border:cs(q('.nested')).borderBottomWidth,minHeight:cs(q('.nested')).minHeight},leaf:{border:cs(q('.leaf')).borderBottomWidth,minHeight:cs(q('.leaf')).minHeight},directLeaf:{border:cs(q('.direct-leaf')).borderBottomWidth,minHeight:cs(q('.direct-leaf')).minHeight}};q('#result').textContent=JSON.stringify(out)}
+  </script></body></html>`
+  await writeFile(fixture, html)
+  const render = width => {
+    const dumped = execFileSync('chromium', ['--headless=new', '--no-sandbox', '--disable-gpu', `--user-data-dir=${join(dir, `profile-${width}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=500', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
+    const raw = dumped.match(/<pre id="result">([^<]+)<\/pre>/)?.[1]
+    assert.ok(raw, `rendered result missing at ${width}px`)
+    return JSON.parse(raw.replaceAll('&quot;', '"').replaceAll('&amp;', '&'))
+  }
+  try {
+    const wide = render(1440)
+    assert.deepEqual(wide.scroll, wide.viewport, 'wide fixture must not overflow')
+    assert.ok(wide.sessions.width >= 255 && wide.sessions.width <= 273)
+    assert.ok(wide.review.width >= 320 && wide.review.width <= 400)
+    assert.ok(wide.chat.width > 700)
+    assert.equal(wide.nested.border, '0px', 'nested review container must remain structurally unflattened')
+    assert.equal(wide.leaf.border, '0px', 'nested descendants remain owned by their component structure')
+    assert.equal(wide.directLeaf.border, '1px', 'direct leaf row receives compact review hierarchy')
+
+    const narrow = render(700)
+    assert.deepEqual(narrow.scroll, narrow.viewport, 'narrow fixture must not overflow')
+    assert.equal(narrow.review.display, 'none', 'narrow state preserves conversation instead of inspector takeover')
+    assert.ok(narrow.sessions.width >= 191 && narrow.sessions.width <= 193)
+    assert.ok(narrow.chat.width >= 507)
+    assert.ok(narrow.composer.bottom <= narrow.viewport[1] && narrow.composer.height >= 62, 'composer remains visible and usable')
+  } finally {
+    await rm(dir, { recursive: true, force: true })
+    env.dispose()
+  }
 })

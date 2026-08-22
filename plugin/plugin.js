@@ -178,17 +178,13 @@ const COMPACT_LAYOUT_CSS = `
     min-width: 12rem !important;
   }
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-review"]):not([style*="display: none"]) {
-    position: absolute !important;
-    z-index: 20;
-    inset: var(--o8-pane-header-height) 0 0 12rem;
-    width: auto !important;
-    max-width: calc(100vw - 12rem) !important;
-    min-width: 0 !important;
-    background: var(--dt-background, var(--background)) !important;
-    box-shadow: -18px 0 48px color-mix(in srgb, var(--dt-background, var(--background)) 52%, transparent);
+    display: none !important;
   }
   :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] {
     padding-inline: 0.75rem !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-root"] {
+    padding-inline: 0.5rem !important;
   }
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(p, div) {
@@ -240,7 +236,7 @@ const COMPACT_LAYOUT_CSS = `
   border-color: color-mix(in srgb, var(--dt-border) 55%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, [role="button"]):focus-visible,
-:root[data-hermes-liquid-glass-layout="compact"] :where(input, textarea, select):focus-visible {
+:root[data-hermes-liquid-glass-layout="compact"] :where(input, textarea, select, [contenteditable="true"]):focus-visible {
   outline: 1px solid color-mix(in srgb, var(--dt-ring) 76%, transparent) !important;
   outline-offset: 1px !important;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--dt-ring) 14%, transparent) !important;
