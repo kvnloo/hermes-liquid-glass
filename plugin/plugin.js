@@ -37,52 +37,57 @@ const COMPACT_LAYOUT_CSS = `
   --sidebar-width: 16rem;
   --sidebar-content-inline-padding: 0.625rem;
   --o8-compact-radius: 0.25rem;
-  --o8-pane-header-height: 2rem;
+  --o8-pane-header-height: 3rem;
   --composer-surface-pad-x: 0.625rem;
   --composer-surface-pad-y: 0.3125rem;
   --composer-row-gap: 0.25rem;
+  --o8-glass-sidebar: linear-gradient(135deg, var(--dt-card, var(--card, var(--dt-background, var(--background)))), var(--dt-background, var(--background)));
+  --o8-glass-center: linear-gradient(145deg, color-mix(in srgb, var(--dt-background, var(--background)) 82%, transparent), color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 72%, transparent));
+  --o8-glass-review: linear-gradient(225deg, var(--dt-card, var(--card, var(--dt-background, var(--background)))), var(--dt-background, var(--background)));
+  --o8-glass-elevated: linear-gradient(160deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 94%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 88%, transparent));
 }
 :root[data-hermes-liquid-glass-layout="compact"] body {
   font-size: 0.8125rem;
   line-height: 1.42;
   letter-spacing: -0.008em;
+  color: var(--dt-foreground, var(--foreground)) !important;
 }
 @media (min-width: 720px) {
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
-    flex: 0 0 16rem !important;
-    width: 16rem !important;
+    flex: 0 0 clamp(16rem, 18vw, 22rem) !important;
+    width: clamp(16rem, 18vw, 22rem) !important;
     min-width: 16rem !important;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 34%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 46%, transparent)) !important;
-    box-shadow: 1px 0 0 color-mix(in srgb, var(--dt-foreground) 5%, transparent), 18px 0 48px color-mix(in srgb, var(--dt-background, var(--background)) 22%, transparent);
+    background: var(--o8-glass-sidebar) !important;
+    box-shadow: 1px 0 0 color-mix(in srgb, var(--dt-foreground) 12%, transparent), 20px 0 56px color-mix(in srgb, var(--dt-background, var(--background)) 44%, transparent);
     backdrop-filter: blur(32px) saturate(126%);
   }
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-review"]):not([style*="display: none"]) {
-    flex: 0 0 clamp(20rem, 27vw, 25rem) !important;
-    width: clamp(20rem, 27vw, 25rem) !important;
+    flex: 0 0 clamp(20rem, 22vw, 26rem) !important;
+    width: clamp(20rem, 22vw, 26rem) !important;
     min-width: 20rem !important;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 30%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 48%, transparent)) !important;
-    box-shadow: -1px 0 0 color-mix(in srgb, var(--dt-foreground) 5%, transparent), -18px 0 48px color-mix(in srgb, var(--dt-background, var(--background)) 22%, transparent);
+    background: var(--o8-glass-review) !important;
+    box-shadow: -1px 0 0 color-mix(in srgb, var(--dt-foreground) 12%, transparent), -20px 0 56px color-mix(in srgb, var(--dt-background, var(--background)) 44%, transparent);
     backdrop-filter: blur(34px) saturate(124%);
   }
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-sessions"],
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] {
     border-right: 1px solid color-mix(in srgb, var(--dt-border) 74%, transparent) !important;
+    background: transparent !important;
   }
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] {
     border-right: 0 !important;
     border-left: 1px solid color-mix(in srgb, var(--dt-border) 74%, transparent) !important;
     padding: 0.5rem 0.75rem;
   }
-}
-@media (min-width: 1680px) {
-  :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
-    flex-basis: 17rem !important;
-    width: 17rem !important;
-    min-width: 17rem !important;
+  :root[data-hermes-liquid-glass-layout="compact"] :where([data-tree-group="grp-sessions"], [data-tree-group="grp-review"], [data-slot="aui_thread-content"]) {
+    color: var(--dt-foreground, var(--foreground)) !important;
+  }
+  :root[data-hermes-liquid-glass-layout="compact"] :where([data-tree-group="grp-sessions"], [data-tree-group="grp-review"], [data-slot="aui_thread-content"]) :where(button, strong, p, span, small, h2, h3, h4) {
+    color: inherit !important;
   }
 }
 :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-slot="aui_thread-content"]) {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--dt-background, var(--background)) 38%, transparent), color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 16%, transparent)) !important;
+  background: var(--o8-glass-center) !important;
   backdrop-filter: blur(24px) saturate(116%);
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(:has(> [data-tree-group="grp-sessions"]), :has(> [data-slot="aui_thread-content"]), :has(> [data-tree-group="grp-review"])) > header {
@@ -144,15 +149,15 @@ const COMPACT_LAYOUT_CSS = `
   font-weight: 450;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-root"] {
-  padding-inline: 0.75rem !important;
-  padding-bottom: 0.5rem !important;
+  padding-inline: clamp(1rem, 1.5vw, 1.5rem) !important;
+  padding-bottom: clamp(0.75rem, 1.2vw, 1.25rem) !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-surface"] {
-  min-height: 3.875rem !important;
+  min-height: 5.25rem !important;
   border-radius: 0.5rem !important;
   border: 1px solid color-mix(in srgb, var(--dt-border) 82%, transparent) !important;
   box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 12%, transparent) inset, 0 18px 52px color-mix(in srgb, var(--dt-background, var(--background)) 48%, transparent), 0 0 0 1px color-mix(in srgb, var(--dt-foreground) 3%, transparent) !important;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 48%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 34%, transparent)) !important;
+  background: var(--o8-glass-elevated) !important;
   color: var(--dt-foreground, var(--foreground)) !important;
   backdrop-filter: blur(18px) saturate(112%);
 }
