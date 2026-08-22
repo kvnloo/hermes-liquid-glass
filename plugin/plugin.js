@@ -249,9 +249,9 @@ const COMPACT_LAYOUT_CSS = `
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, [role="button"]):focus-visible,
 :root[data-hermes-liquid-glass-layout="compact"] :where(input, textarea, select, [contenteditable="true"]):focus-visible {
-  outline: 1px solid color-mix(in srgb, var(--dt-ring) 76%, transparent) !important;
+  outline: 2px solid color-mix(in srgb, var(--dt-ring) 88%, transparent) !important;
   outline-offset: 1px !important;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--dt-ring) 14%, transparent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dt-ring) 24%, transparent) !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])[class*="active"],
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])[class*="open"] {

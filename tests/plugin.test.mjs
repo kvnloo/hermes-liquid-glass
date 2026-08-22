@@ -120,6 +120,10 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-sessions[\s\S]*width:\s*12rem\s*!important/)
   assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-review[\s\S]*display:\s*none\s*!important/)
   assert.match(style.textContent, /:where\(input, textarea, select, \[contenteditable="true"\]\):focus-visible/)
+  assert.match(style.textContent, /outline:\s*2px solid color-mix\(in srgb, var\(--dt-ring\) 88%, transparent\)\s*!important/,
+    'keyboard focus needs an unmistakable two-pixel perimeter')
+  assert.match(style.textContent, /box-shadow:\s*0 0 0 3px color-mix\(in srgb, var\(--dt-ring\) 24%, transparent\)\s*!important/,
+    'keyboard focus needs a visible adjacent halo')
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /box-shadow:[^;]+inset[^;]+,/)
   assert.doesNotMatch(style.textContent, /#app-sidebar|#chat-side-panel/)
 
