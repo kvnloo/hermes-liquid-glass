@@ -1,0 +1,24 @@
+{
+  "plugin": "liquid-glass-wal",
+  "registrations": [
+    {
+      "id": "liquid-glass-wal:theme",
+      "area": "themes"
+    },
+    {
+      "id": "liquid-glass-wal:sync",
+      "area": "palette"
+    },
+    {
+      "id": "liquid-glass-wal:toggle-auto",
+      "area": "palette"
+    },
+    {
+      "id": "liquid-glass-wal:toggle-compact-layout",
+      "area": "palette"
+    }
+  ],
+  "compactStyleLoaded": true,
+  "compactStyleDisposed": true,
+  "liveDesktopTouched": false
+}
