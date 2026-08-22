@@ -133,8 +133,13 @@ const COMPACT_LAYOUT_CSS = `
   border-radius: 0.5rem !important;
   border: 1px solid color-mix(in srgb, var(--dt-border) 82%, transparent) !important;
   box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 4%, transparent) inset !important;
-  background: color-mix(in srgb, var(--dt-card) 58%, transparent) !important;
+  background: color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 72%, transparent) !important;
+  color: var(--dt-foreground, var(--foreground)) !important;
   backdrop-filter: blur(18px) saturate(112%);
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-surface"] :where(input, textarea, [contenteditable="true"]) {
+  color: inherit !important;
+  caret-color: var(--dt-ring, var(--ring, currentColor));
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-rich-input"] {
   min-height: 1.875rem !important;

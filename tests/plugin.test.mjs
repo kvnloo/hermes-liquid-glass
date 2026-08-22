@@ -88,6 +88,8 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   const row = ruleFor(`${rootPrefix}[data-slot="context-menu-trigger"]:has(> [data-slot="row-button"])`)
   assert.match(row?.declarations || '', /height:\s*1\.625rem/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /min-height:\s*4\.5rem\s*!important/)
+  assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /var\(--dt-card,\s*var\(--card,\s*var\(--dt-background,\s*var\(--background\)\)\)\)/)
+  assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /color:\s*var\(--dt-foreground,\s*var\(--foreground\)\)\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="aui_thread-content"]`)?.declarations || '', /max-width:\s*58rem\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="sidebar-group-label"]`)?.declarations || '', /font-size:\s*0\.625rem\s*!important/)
   assert.doesNotMatch(style.textContent, /#app-sidebar|#chat-side-panel/)
