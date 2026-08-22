@@ -141,6 +141,13 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(style.textContent, /box-shadow:\s*0 0 0 3px color-mix\(in srgb, var\(--dt-ring\) 24%, transparent\)\s*!important/,
     'keyboard focus needs a visible adjacent halo')
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /box-shadow:[^;]+inset[^;]+,/)
+  assert.match(style.textContent, /data-o8-mobile-pane="conversation"[\s\S]*grp-sessions[\s\S]*display:\s*none\s*!important/)
+  assert.match(style.textContent, /:where\(\[aria-current="true"\], \[aria-selected="true"\], \[data-state="selected"\]\)/)
+  assert.match(style.textContent, /:where\(\[data-unread="true"\], \[data-status="unread"\]\)[^\{]*::after/)
+  assert.match(style.textContent, /\[data-slot="composer-surface"\] :where\(\[data-slot="composer-send"\], button\[type="submit"\]\)/)
+  assert.match(style.textContent, /\[data-tree-group="grp-review"\] :where\(\[data-section\], \[data-review-section\]\)/)
+  assert.match(style.textContent, /:where\(\[data-empty="true"\], \[data-state="empty"\]\)/)
+  assert.match(style.textContent, /@media \(prefers-reduced-motion: reduce\)/)
   assert.doesNotMatch(style.textContent, /#app-sidebar|#chat-side-panel/)
 
   env.dispose()
