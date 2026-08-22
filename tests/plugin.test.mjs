@@ -156,19 +156,19 @@ test('real browser preserves nested inspector structure and responsive conversat
     *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}:root{--dt-background:#111827;--background:#111827;--dt-card:#1f2937;--card:#1f2937;--dt-foreground:#f3f4f6;--foreground:#f3f4f6;--dt-border:#475569;--dt-ring:#60a5fa;--dt-primary:#60a5fa}.shell{display:flex;width:100vw;height:100vh}.pane{display:flex;flex-direction:column;min-width:0}.sessions{flex:0 0 16rem}.chat{flex:1 1 auto}.review{flex:0 0 24rem}.thread{flex:1;overflow:auto}.composer{flex:none}.nested{padding:4px}.leaf{padding:4px}
     ${css}
   </style></head><body><main class="shell"><section class="pane sessions"><header>Sessions</header><div data-tree-group="grp-sessions"><div data-slot="sidebar-content">Alpha</div></div></section><section class="pane chat"><header>Conversation</header><div class="thread" data-slot="aui_thread-viewport"><div data-slot="aui_thread-content"><article data-message-id="1">Message</article></div></div><div class="composer" data-slot="composer-root"><div data-slot="composer-surface"><textarea data-slot="composer-rich-input">Reply</textarea></div></div></section><section class="pane review"><header>Activity</header><div data-tree-group="grp-review"><section class="nested"><div class="leaf">Nested review row</div></section><article class="direct-leaf">Direct review row</article></div></section></main><pre id="result"></pre><script>
-    {const q=s=>document.querySelector(s),r=e=>e.getBoundingClientRect(),cs=e=>getComputedStyle(e);const out={viewport:[innerWidth,innerHeight],scroll:[document.documentElement.scrollWidth,document.documentElement.scrollHeight],sessions:r(q('.sessions')).toJSON(),chat:r(q('.chat')).toJSON(),review:{...r(q('.review')).toJSON(),display:cs(q('.review')).display},composer:r(q('[data-slot="composer-surface"]')).toJSON(),nested:{border:cs(q('.nested')).borderBottomWidth,minHeight:cs(q('.nested')).minHeight},leaf:{border:cs(q('.leaf')).borderBottomWidth,minHeight:cs(q('.leaf')).minHeight},directLeaf:{border:cs(q('.direct-leaf')).borderBottomWidth,minHeight:cs(q('.direct-leaf')).minHeight}};q('#result').textContent=JSON.stringify(out)}
+    {const q=s=>document.querySelector(s),r=e=>e.getBoundingClientRect(),cs=e=>getComputedStyle(e);let tries=0;const capture=()=>{if((innerWidth===0||innerHeight===0)&&tries++<20){setTimeout(capture,25);return}const out={viewport:[innerWidth,innerHeight],scroll:[document.documentElement.scrollWidth,document.documentElement.scrollHeight],sessions:r(q('.sessions')).toJSON(),chat:r(q('.chat')).toJSON(),review:{...r(q('.review')).toJSON(),display:cs(q('.review')).display},composer:r(q('[data-slot="composer-surface"]')).toJSON(),nested:{border:cs(q('.nested')).borderBottomWidth,minHeight:cs(q('.nested')).minHeight},leaf:{border:cs(q('.leaf')).borderBottomWidth,minHeight:cs(q('.leaf')).minHeight},directLeaf:{border:cs(q('.direct-leaf')).borderBottomWidth,minHeight:cs(q('.direct-leaf')).minHeight}};q('#result').textContent=JSON.stringify(out)};capture()}
   </script></body></html>`
   await writeFile(fixture, html)
   const render = width => {
     let result = null
-    for (let attempt = 1; attempt <= 3; attempt += 1) {
-      const dumped = execFileSync('chromium', ['--headless=new', '--ozone-platform=headless', '--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--force-device-scale-factor=1', `--user-data-dir=${join(dir, `profile-${width}-${attempt}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=750', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
+    for (let attempt = 1; attempt <= 10; attempt += 1) {
+      const dumped = execFileSync('chromium', ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--force-device-scale-factor=1', `--user-data-dir=${join(dir, `profile-${width}-${attempt}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=750', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
       const raw = dumped.match(/<pre id="result">([^<]+)<\/pre>/)?.[1]
       assert.ok(raw, `rendered result missing at ${width}px on attempt ${attempt}`)
       result = JSON.parse(raw.replaceAll('&quot;', '"').replaceAll('&amp;', '&'))
       if (result.viewport[0] > 0 && result.viewport[1] > 0) return result
     }
-    assert.fail(`viewport not initialized at ${width}px after 3 attempts: ${JSON.stringify(result)}`)
+    assert.fail(`viewport not initialized at ${width}px after 10 attempts: ${JSON.stringify(result)}`)
   }
   try {
     const wide = render(1440)
