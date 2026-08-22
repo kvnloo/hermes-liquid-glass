@@ -162,7 +162,7 @@ test('real browser preserves nested inspector structure and responsive conversat
   const render = width => {
     let result = null
     for (let attempt = 1; attempt <= 3; attempt += 1) {
-      const dumped = execFileSync('chromium', ['--headless=new', '--ozone-platform=headless', '--no-sandbox', '--disable-dev-shm-usage', `--user-data-dir=${join(dir, `profile-${width}-${attempt}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=500', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
+      const dumped = execFileSync('chromium', ['--headless=new', '--ozone-platform=headless', '--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--force-device-scale-factor=1', `--user-data-dir=${join(dir, `profile-${width}-${attempt}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=750', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
       const raw = dumped.match(/<pre id="result">([^<]+)<\/pre>/)?.[1]
       assert.ok(raw, `rendered result missing at ${width}px on attempt ${attempt}`)
       result = JSON.parse(raw.replaceAll('&quot;', '"').replaceAll('&amp;', '&'))
