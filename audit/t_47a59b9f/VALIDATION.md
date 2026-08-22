@@ -2,7 +2,7 @@
 
 Task: `t_47a59b9f`  
 Branch: `feat/o8-ui`  
-Validated implementation revision: `a492e41` (visual product change at `01df1b6`)  
+Validated implementation revision: `9abf6fc` (visual product change at `01df1b6`)  
 Verdict: **CONDITIONAL PASS for the named validation slice; still FIX-FIRST against strict o8 reference parity**
 
 ## Safety and provenance
@@ -49,7 +49,7 @@ All states have viewport-size document bounds and zero document overflow.
 ### Validation fixes made
 
 1. `01df1b6 fix: strengthen compact keyboard focus` — increased focus perimeter from 1px/76% to 2px/88% and halo from 2px/14% to 3px/24%, with regression assertions.
-2. `a492e41 test: harden headless geometry gate` — added deterministic software/headless flags and a larger virtual-time budget after reproducing intermittent zero-size Chromium viewports; five consecutive full test runs passed.
+2. `a492e41` + `9abf6fc` — hardened the rendered geometry gate after reproducing intermittent zero-size Chromium viewports: removed the conflicting explicit Ozone headless platform, added deterministic headless flags, bounded viewport polling/retries, and a larger virtual-time budget. Five consecutive full post-fix runs passed.
 
 ## Residual gaps
 
