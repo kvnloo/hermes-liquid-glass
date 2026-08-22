@@ -1,0 +1,46 @@
+{
+  "plugin": "liquid-glass-wal",
+  "probe": "isolated synthetic plugin host (Node vm; no live Desktop)",
+  "registrations": [
+    {
+      "id": "liquid-glass-wal:theme",
+      "area": "themes",
+      "dataId": null
+    },
+    {
+      "id": "liquid-glass-wal:sync",
+      "area": "palette",
+      "dataId": "liquid-glass-wal.sync"
+    },
+    {
+      "id": "liquid-glass-wal:toggle-auto",
+      "area": "palette",
+      "dataId": "liquid-glass-wal.toggleAuto"
+    },
+    {
+      "id": "liquid-glass-wal:toggle-compact-layout",
+      "area": "palette",
+      "dataId": "liquid-glass-wal.toggleCompactLayout"
+    },
+    {
+      "id": "liquid-glass-wal:theme",
+      "area": "themes",
+      "dataId": null
+    }
+  ],
+  "startup": {
+    "compactStyleLoaded": true,
+    "reloads": 0,
+    "intervalCreated": 1
+  },
+  "teardown": {
+    "compactStyleDisposed": true,
+    "pluginOwnedContributionDisposals": [
+      "liquid-glass-wal:theme",
+      "liquid-glass-wal:theme"
+    ],
+    "hostOwnedPaletteContributions": 3,
+    "intervalCleared": 1
+  },
+  "liveDesktopTouched": false
+}

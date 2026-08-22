@@ -1,0 +1,57 @@
+{
+  "viewport": [
+    1440,
+    900
+  ],
+  "scroll": [
+    1440,
+    900
+  ],
+  "sessions": {
+    "x": 0,
+    "y": 0,
+    "width": 256,
+    "height": 900,
+    "top": 0,
+    "right": 256,
+    "bottom": 900,
+    "left": 0
+  },
+  "chat": {
+    "x": 256,
+    "y": 0,
+    "width": 800,
+    "height": 900,
+    "top": 0,
+    "right": 1056,
+    "bottom": 900,
+    "left": 256
+  },
+  "review": {
+    "x": 1056,
+    "y": 0,
+    "width": 384,
+    "height": 900,
+    "top": 0,
+    "right": 1440,
+    "bottom": 900,
+    "left": 1056,
+    "display": "flex"
+  },
+  "composer": {
+    "x": 256,
+    "y": 819,
+    "width": 800,
+    "height": 81,
+    "top": 819,
+    "right": 1056,
+    "bottom": 900,
+    "left": 256
+  },
+  "focus": "composer-rich-input",
+  "counts": {
+    "sessions": 24,
+    "messages": 10,
+    "review": 17
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "task": "t_7584592c",
+  "revision": "fdb2182ff3765cde19d8d30012d7a97b67f12b4d",
+  "branch": "feat/o8-ui",
+  "utcCompleted": "2026-08-22T22:11:45.012367+00:00",
+  "platform": "Linux-7.1.5-1-cachyos-x86_64-with-glibc2.44",
+  "node": "v26.4.0",
+  "npm": "12.0.1",
+  "python": "3.11.14",
+  "chromium": "Chromium 150.0.7871.186 Arch Linux",
+  "isolation": "Node VM synthetic plugin host plus test-owned ephemeral headless Chromium profiles; no live Hermes Desktop interaction",
+  "results": [
+    {
+      "command": "node --test tests/plugin.test.mjs",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8",
+      "startedUtc": "2026-08-22T22:11:40.050438+00:00",
+      "exitCode": 0,
+      "output": "\u2714 compact variant is opt-in, persists state, and cleans up its style (7.812699ms)\n\u2714 enabled compact variant survives live pywal poll updates without reload (1.804462ms)\n[297849:297947:0822/171141.069435:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.069520:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.069555:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.069589:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.069615:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.069652:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.069730:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.070618:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.070682:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.095804:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.095953:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.096013:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.096051:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.096088:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.096117:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.096166:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.096209:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[297849:297947:0822/171141.096244:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.075084:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.075736:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.075849:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.075919:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.075977:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.076021:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.076072:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.076188:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.077215:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.105082:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.105574:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.105697:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.105771:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.105829:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n[298277:298384:0822/171142.105878:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:395] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.\n\u2714 real browser preserves nested inspector structure and responsive conversation geometry (2059.598711ms)\n\u2139 tests 3\n\u2139 suites 0\n\u2139 pass 3\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 2134.393599\n"
+    },
+    {
+      "command": "node audit/t_7584592c/verify-plugin-load.mjs",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8",
+      "startedUtc": "2026-08-22T22:11:42.226524+00:00",
+      "exitCode": 0,
+      "output": "{\n  \"plugin\": \"liquid-glass-wal\",\n  \"probe\": \"isolated synthetic plugin host (Node vm; no live Desktop)\",\n  \"registrations\": [\n    {\n      \"id\": \"liquid-glass-wal:theme\",\n      \"area\": \"themes\",\n      \"dataId\": null\n    },\n    {\n      \"id\": \"liquid-glass-wal:sync\",\n      \"area\": \"palette\",\n      \"dataId\": \"liquid-glass-wal.sync\"\n    },\n    {\n      \"id\": \"liquid-glass-wal:toggle-auto\",\n      \"area\": \"palette\",\n      \"dataId\": \"liquid-glass-wal.toggleAuto\"\n    },\n    {\n      \"id\": \"liquid-glass-wal:toggle-compact-layout\",\n      \"area\": \"palette\",\n      \"dataId\": \"liquid-glass-wal.toggleCompactLayout\"\n    },\n    {\n      \"id\": \"liquid-glass-wal:theme\",\n      \"area\": \"themes\",\n      \"dataId\": null\n    }\n  ],\n  \"startup\": {\n    \"compactStyleLoaded\": true,\n    \"reloads\": 0,\n    \"intervalCreated\": 1\n  },\n  \"teardown\": {\n    \"compactStyleDisposed\": true,\n    \"pluginOwnedContributionDisposals\": [\n      \"liquid-glass-wal:theme\",\n      \"liquid-glass-wal:theme\"\n    ],\n    \"hostOwnedPaletteContributions\": 3,\n    \"intervalCleared\": 1\n  },\n  \"liveDesktopTouched\": false\n}\n"
+    },
+    {
+      "command": "node --check plugin/plugin.js",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8",
+      "startedUtc": "2026-08-22T22:11:42.295881+00:00",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": "python -m py_compile scripts/build_theme.py",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8",
+      "startedUtc": "2026-08-22T22:11:42.330635+00:00",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": "bash -n scripts/apply.sh scripts/install.sh scripts/sync-layout.sh",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8",
+      "startedUtc": "2026-08-22T22:11:42.406572+00:00",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": "git diff --check",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8",
+      "startedUtc": "2026-08-22T22:11:42.410168+00:00",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": "git diff HEAD^ HEAD --check",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8",
+      "startedUtc": "2026-08-22T22:11:42.412804+00:00",
+      "exitCode": 0,
+      "output": ""
+    },
+    {
+      "command": "npm exec tsc -- --noEmit",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8/trailer",
+      "startedUtc": "2026-08-22T22:11:42.418335+00:00",
+      "exitCode": 0,
+      "output": "npm notice run hermes-liquid-glass-trailer@1.0.0 npx\nnpm notice run 'tsc' --noEmit\n"
+    },
+    {
+      "command": "npm run build",
+      "cwd": "/workspace/zer0/oss/hermes-liquid-glass-o8/trailer",
+      "startedUtc": "2026-08-22T22:11:44.186513+00:00",
+      "exitCode": 1,
+      "output": "npm notice run hermes-liquid-glass-trailer@1.0.0 build\nnpm notice run remotion render src/index.tsx LiquidGlassTrailer out/liquid-glass-trailer.mp4 --log=error\n/workspace/zer0/oss/hermes-liquid-glass-o8/trailer/node_modules/@remotion/renderer/dist/get-local-browser-executable.js:31\n        throw new TypeError('No browser found for rendering frames! Please open a GitHub issue and describe ' +\n              ^\n\nTypeError: No browser found for rendering frames! Please open a GitHub issue and describe how you reached this error: https://remotion.dev/issue\n    at getLocalBrowserExecutable (/workspace/zer0/oss/hermes-liquid-glass-o8/trailer/node_modules/@remotion/renderer/dist/get-local-browser-executable.js:31:15)\n    at Object.internalOpenBrowser (/workspace/zer0/oss/hermes-liquid-glass-o8/trailer/node_modules/@remotion/renderer/dist/open-browser.js:67:89)\n\nNode.js v26.4.0\n"
+    }
+  ]
+}

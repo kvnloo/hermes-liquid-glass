@@ -1,0 +1,57 @@
+{
+  "viewport": [
+    320,
+    700
+  ],
+  "scroll": [
+    320,
+    700
+  ],
+  "sessions": {
+    "x": 0,
+    "y": 0,
+    "width": 256,
+    "height": 700,
+    "top": 0,
+    "right": 256,
+    "bottom": 700,
+    "left": 0
+  },
+  "chat": {
+    "x": 256,
+    "y": 0,
+    "width": 0,
+    "height": 700,
+    "top": 0,
+    "right": 256,
+    "bottom": 700,
+    "left": 256
+  },
+  "review": {
+    "x": 256,
+    "y": 0,
+    "width": 384,
+    "height": 700,
+    "top": 0,
+    "right": 640,
+    "bottom": 700,
+    "left": 256,
+    "display": "flex"
+  },
+  "composer": {
+    "x": 256,
+    "y": 593,
+    "width": 0,
+    "height": 107,
+    "top": 593,
+    "right": 256,
+    "bottom": 700,
+    "left": 256
+  },
+  "focus": null,
+  "counts": {
+    "sessions": 24,
+    "messages": 10,
+    "review": 17
+  }
+}
