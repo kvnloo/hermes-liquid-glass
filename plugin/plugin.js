@@ -41,10 +41,10 @@ const COMPACT_LAYOUT_CSS = `
   --composer-surface-pad-x: 0.625rem;
   --composer-surface-pad-y: 0.3125rem;
   --composer-row-gap: 0.25rem;
-  --o8-glass-sidebar: linear-gradient(135deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 88%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 82%, transparent));
-  --o8-glass-center: linear-gradient(145deg, color-mix(in srgb, var(--dt-background, var(--background)) 78%, transparent), color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 72%, transparent));
-  --o8-glass-review: linear-gradient(225deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 86%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 80%, transparent));
-  --o8-glass-elevated: linear-gradient(160deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 92%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 86%, transparent));
+  --o8-glass-sidebar: linear-gradient(135deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 92%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 88%, transparent));
+  --o8-glass-center: radial-gradient(ellipse at 52% 38%, color-mix(in srgb, var(--dt-background, var(--background)) 94%, transparent), color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 90%, transparent) 64%, transparent 118%);
+  --o8-glass-review: linear-gradient(225deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 94%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 90%, transparent));
+  --o8-glass-elevated: linear-gradient(160deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 96%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 94%, transparent));
 }
 :root[data-hermes-liquid-glass-layout="compact"] body {
   font-size: 0.8125rem;
@@ -65,7 +65,7 @@ const COMPACT_LAYOUT_CSS = `
     width: clamp(16rem, 18vw, 22rem) !important;
     min-width: 16rem !important;
     background: var(--o8-glass-sidebar) !important;
-    box-shadow: 1px 0 0 color-mix(in srgb, var(--dt-foreground) 12%, transparent), 20px 0 56px color-mix(in srgb, var(--dt-background, var(--background)) 44%, transparent);
+    box-shadow: 1px 0 0 color-mix(in srgb, var(--dt-foreground) 12%, transparent), 14px 0 42px color-mix(in srgb, var(--dt-background, var(--background)) 32%, transparent), -1px 0 0 color-mix(in srgb, var(--dt-foreground) 4%, transparent) inset;
     backdrop-filter: blur(32px) saturate(126%);
   }
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-review"]):not([style*="display: none"]) {
@@ -73,7 +73,7 @@ const COMPACT_LAYOUT_CSS = `
     width: clamp(20rem, 22vw, 26rem) !important;
     min-width: 20rem !important;
     background: var(--o8-glass-review) !important;
-    box-shadow: -1px 0 0 color-mix(in srgb, var(--dt-foreground) 12%, transparent), -20px 0 56px color-mix(in srgb, var(--dt-background, var(--background)) 44%, transparent);
+    box-shadow: -1px 0 0 color-mix(in srgb, var(--dt-foreground) 12%, transparent), -14px 0 42px color-mix(in srgb, var(--dt-background, var(--background)) 32%, transparent), 1px 0 0 color-mix(in srgb, var(--dt-foreground) 4%, transparent) inset;
     backdrop-filter: blur(34px) saturate(124%);
   }
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-sessions"],

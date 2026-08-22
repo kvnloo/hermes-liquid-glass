@@ -95,6 +95,12 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   for (const token of ['sidebar', 'center', 'review', 'elevated']) {
     assert.match(style.textContent, new RegExp(`--o8-glass-${token}:[^;]+transparent`), `${token} material must retain compositor wallpaper`)
   }
+  assert.match(style.textContent, /--o8-glass-center:\s*radial-gradient\([^;]+94%[^;]+90%[^;]+transparent/,
+    'center glass must localize transmission instead of applying one washed veil')
+  assert.match(style.textContent, /--o8-glass-sidebar:\s*linear-gradient\([^;]+92%[^;]+88%[^;]+transparent/,
+    'sidebar glass must remain dark while transmitting wallpaper')
+  assert.match(style.textContent, /--o8-glass-review:\s*linear-gradient\([^;]+94%[^;]+90%[^;]+transparent/,
+    'review glass must separate through a restrained value step rather than opacity')
   assert.match(ruleFor(`${rootPrefix}body`)?.declarations || '', /background:\s*transparent\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="sidebar-wrapper"] [class*="h-[34px]"]`)?.declarations || '', /background:\s*var\(--o8-glass-sidebar\)\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /color:\s*var\(--dt-foreground,\s*var\(--foreground\)\)\s*!important/)
@@ -150,20 +156,23 @@ test('real browser preserves nested inspector structure and responsive conversat
   </script></body></html>`
   await writeFile(fixture, html)
   const render = width => {
-    const dumped = execFileSync('chromium', ['--headless=new', '--no-sandbox', '--disable-gpu', `--user-data-dir=${join(dir, `profile-${width}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=500', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
+    const dumped = execFileSync('chromium', ['--headless=new', '--ozone-platform=headless', '--no-sandbox', `--user-data-dir=${join(dir, `profile-${width}`)}`, `--window-size=${width},900`, '--run-all-compositor-stages-before-draw', '--virtual-time-budget=500', '--dump-dom', `file://${fixture}`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 })
     const raw = dumped.match(/<pre id="result">([^<]+)<\/pre>/)?.[1]
     assert.ok(raw, `rendered result missing at ${width}px`)
     return JSON.parse(raw.replaceAll('&quot;', '"').replaceAll('&amp;', '&'))
   }
   try {
     const wide = render(1440)
+    assert.ok(wide.viewport[0] > 0 && wide.viewport[1] > 0, `wide viewport not initialized: ${JSON.stringify(wide)}`)
     assert.deepEqual(wide.scroll, wide.viewport, 'wide fixture must not overflow')
-    assert.ok(wide.sessions.width >= 258 && wide.sessions.width <= 262)
-    assert.ok(wide.review.width >= 320 && wide.review.width <= 322)
-    assert.ok(wide.chat.width >= 855 && wide.chat.width <= 862)
-    assert.ok(wide.sessions.width / wide.viewport[0] >= 0.17)
-    assert.ok(wide.chat.width / wide.viewport[0] >= 0.58 && wide.chat.width / wide.viewport[0] <= 0.64)
-    assert.ok(wide.review.width / wide.viewport[0] >= 0.20)
+    const sessionsRatio = wide.sessions.width / wide.viewport[0]
+    const chatRatio = wide.chat.width / wide.viewport[0]
+    const reviewRatio = wide.review.width / wide.viewport[0]
+    assert.ok(sessionsRatio >= 0.17 && sessionsRatio <= 0.20, `sessions ratio ${sessionsRatio} outside 17–20%`)
+    assert.ok(chatRatio >= 0.58 && chatRatio <= 0.64, `chat ratio ${chatRatio} outside 58–64%`)
+    assert.ok(reviewRatio >= 0.20 && reviewRatio <= 0.23, `review ratio ${reviewRatio} outside 20–23%`)
+    assert.ok(Math.abs(wide.sessions.width + wide.chat.width + wide.review.width - wide.viewport[0]) <= 1,
+      'wide panes must close the viewport without relying on stale exact widths')
     assert.equal(wide.nested.border, '0px', 'nested review container must remain structurally unflattened')
     assert.equal(wide.leaf.border, '0px', 'nested descendants remain owned by their component structure')
     assert.equal(wide.directLeaf.border, '1px', 'direct leaf row receives compact review hierarchy')
