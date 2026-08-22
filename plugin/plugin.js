@@ -174,7 +174,7 @@ const COMPACT_LAYOUT_CSS = `
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-rich-input"] {
   min-height: 1.5rem !important;
-  font-size: 0.75rem !important;
+  font-size: 0.8125rem !important;
   line-height: 1.4 !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] {
@@ -204,9 +204,19 @@ const COMPACT_LAYOUT_CSS = `
   border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 38%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(section, article, [data-message-id]) {
-  padding-block: 0.4375rem !important;
-  margin-block: 0 !important;
-  border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 44%, transparent);
+  padding: 0.625rem 0.75rem !important;
+  margin-block: 0.375rem !important;
+  border: 1px solid color-mix(in srgb, var(--dt-border) 34%, transparent);
+  border-radius: 0.625rem;
+  background: color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 22%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 5%, transparent) inset;
+  font-size: 0.875rem;
+  line-height: 1.48;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(section, article, [data-message-id]):nth-child(even) {
+  margin-left: clamp(0.5rem, 2vw, 1.5rem) !important;
+  background: color-mix(in srgb, var(--dt-primary, var(--primary)) 7%, transparent);
+  border-color: color-mix(in srgb, var(--dt-primary, var(--primary)) 20%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-viewport"] {
   scrollbar-width: thin;

@@ -113,7 +113,15 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(ruleFor(`${rootPrefix}:has(> [data-tree-group="grp-review"]):not([style*="display: none"])`)?.declarations || '', /background:\s*var\(--o8-glass-review\)/)
   assert.match(style.textContent, /\[data-tree-group="grp-review"\]\s*\{[^}]*border-right:\s*0[^}]*padding:\s*0\.5rem 0\.75rem/)
   assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(p, div\)\s*\{[^}]*padding-block:\s*0\.4375rem/)
-  assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(section, article, \[data-message-id\]\)\s*\{[^}]*padding-block:\s*0\.4375rem/)
+  assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(section, article, \[data-message-id\]\)\s*\{[^}]*padding:\s*0\.625rem 0\.75rem/)
+  assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(section, article, \[data-message-id\]\)\s*\{[^}]*border-radius:\s*0\.625rem[^}]*background:\s*color-mix/,
+    'message groups need local glass surfaces instead of one flat ledger')
+  assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(section, article, \[data-message-id\]\):nth-child\(even\)/,
+    'alternating message groups need a restrained hierarchy step')
+  assert.match(ruleFor(`${rootPrefix}[data-slot="composer-rich-input"]`)?.declarations || '', /font-size:\s*0\.8125rem\s*!important/,
+    'composer copy must remain readable at the compact density')
+  assert.match(style.textContent, /\[data-slot="aui_thread-content"\] > :where\(section, article, \[data-message-id\]\)[^}]*\{[^}]*font-size:\s*0\.875rem/,
+    'conversation copy must retain a readable primary tier')
   assert.doesNotMatch(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\)\s*\{/,
     'review styling must not flatten every direct container')
   assert.match(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\):not\(:has\(> :where\(div, section, article\)\)\)\s*\{[^}]*min-height:\s*2\.5rem[^}]*border-bottom:/)
