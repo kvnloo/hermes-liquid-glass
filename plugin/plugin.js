@@ -41,16 +41,23 @@ const COMPACT_LAYOUT_CSS = `
   --composer-surface-pad-x: 0.625rem;
   --composer-surface-pad-y: 0.3125rem;
   --composer-row-gap: 0.25rem;
-  --o8-glass-sidebar: linear-gradient(135deg, var(--dt-card, var(--card, var(--dt-background, var(--background)))), var(--dt-background, var(--background)));
-  --o8-glass-center: linear-gradient(145deg, color-mix(in srgb, var(--dt-background, var(--background)) 82%, transparent), color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 72%, transparent));
-  --o8-glass-review: linear-gradient(225deg, var(--dt-card, var(--card, var(--dt-background, var(--background)))), var(--dt-background, var(--background)));
-  --o8-glass-elevated: linear-gradient(160deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 94%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 88%, transparent));
+  --o8-glass-sidebar: linear-gradient(135deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 88%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 82%, transparent));
+  --o8-glass-center: linear-gradient(145deg, color-mix(in srgb, var(--dt-background, var(--background)) 78%, transparent), color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 72%, transparent));
+  --o8-glass-review: linear-gradient(225deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 86%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 80%, transparent));
+  --o8-glass-elevated: linear-gradient(160deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 92%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 86%, transparent));
 }
 :root[data-hermes-liquid-glass-layout="compact"] body {
   font-size: 0.8125rem;
   line-height: 1.42;
   letter-spacing: -0.008em;
   color: var(--dt-foreground, var(--foreground)) !important;
+  background: transparent !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-wrapper"] [class*="h-[34px]"] {
+  background: var(--o8-glass-sidebar) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--dt-foreground) 10%, transparent);
+  box-shadow: 0 16px 32px color-mix(in srgb, var(--dt-background, var(--background)) 24%, transparent);
+  backdrop-filter: blur(32px) saturate(126%);
 }
 @media (min-width: 720px) {
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {

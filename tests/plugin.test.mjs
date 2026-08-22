@@ -92,6 +92,11 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(row?.declarations || '', /height:\s*1\.625rem/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /min-height:\s*5\.25rem\s*!important/)
   assert.match(style.textContent, /--o8-glass-elevated:[^;]+var\(--dt-card,\s*var\(--card,\s*var\(--dt-background,\s*var\(--background\)\)\)\)/)
+  for (const token of ['sidebar', 'center', 'review', 'elevated']) {
+    assert.match(style.textContent, new RegExp(`--o8-glass-${token}:[^;]+transparent`), `${token} material must retain compositor wallpaper`)
+  }
+  assert.match(ruleFor(`${rootPrefix}body`)?.declarations || '', /background:\s*transparent\s*!important/)
+  assert.match(ruleFor(`${rootPrefix}[data-slot="sidebar-wrapper"] [class*="h-[34px]"]`)?.declarations || '', /background:\s*var\(--o8-glass-sidebar\)\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /color:\s*var\(--dt-foreground,\s*var\(--foreground\)\)\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="aui_thread-content"]`)?.declarations || '', /max-width:\s*58rem\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="sidebar-group-label"]`)?.declarations || '', /font-size:\s*0\.625rem\s*!important/)
