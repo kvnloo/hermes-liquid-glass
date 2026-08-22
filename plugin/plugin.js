@@ -52,15 +52,17 @@ const COMPACT_LAYOUT_CSS = `
     flex: 0 0 16rem !important;
     width: 16rem !important;
     min-width: 16rem !important;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 44%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 64%, transparent)) !important;
-    backdrop-filter: blur(28px) saturate(118%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 34%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 46%, transparent)) !important;
+    box-shadow: 1px 0 0 color-mix(in srgb, var(--dt-foreground) 5%, transparent), 18px 0 48px color-mix(in srgb, var(--dt-background, var(--background)) 22%, transparent);
+    backdrop-filter: blur(32px) saturate(126%);
   }
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-review"]):not([style*="display: none"]) {
     flex: 0 0 clamp(20rem, 27vw, 25rem) !important;
     width: clamp(20rem, 27vw, 25rem) !important;
     min-width: 20rem !important;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 38%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 70%, transparent)) !important;
-    backdrop-filter: blur(30px) saturate(116%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 30%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 48%, transparent)) !important;
+    box-shadow: -1px 0 0 color-mix(in srgb, var(--dt-foreground) 5%, transparent), -18px 0 48px color-mix(in srgb, var(--dt-background, var(--background)) 22%, transparent);
+    backdrop-filter: blur(34px) saturate(124%);
   }
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-sessions"],
   :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] {
@@ -78,6 +80,18 @@ const COMPACT_LAYOUT_CSS = `
     width: 17rem !important;
     min-width: 17rem !important;
   }
+}
+:root[data-hermes-liquid-glass-layout="compact"] :has(> [data-slot="aui_thread-content"]) {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--dt-background, var(--background)) 38%, transparent), color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 16%, transparent)) !important;
+  backdrop-filter: blur(24px) saturate(116%);
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(:has(> [data-tree-group="grp-sessions"]), :has(> [data-slot="aui_thread-content"]), :has(> [data-tree-group="grp-review"])) > header {
+  min-height: var(--o8-pane-header-height) !important;
+  height: var(--o8-pane-header-height) !important;
+  padding-block: 0.4375rem !important;
+  border-bottom-color: color-mix(in srgb, var(--dt-border) 72%, transparent) !important;
+  background: color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 24%, transparent) !important;
+  backdrop-filter: blur(30px) saturate(124%);
 }
 @media (max-width: 1040px) {
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
@@ -131,14 +145,14 @@ const COMPACT_LAYOUT_CSS = `
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-root"] {
   padding-inline: 0.75rem !important;
-  padding-bottom: 0.625rem !important;
+  padding-bottom: 0.5rem !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-surface"] {
-  min-height: 4.5rem !important;
+  min-height: 3.875rem !important;
   border-radius: 0.5rem !important;
   border: 1px solid color-mix(in srgb, var(--dt-border) 82%, transparent) !important;
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 9%, transparent) inset, 0 14px 42px color-mix(in srgb, var(--dt-background, var(--background)) 38%, transparent), 0 0 0 1px color-mix(in srgb, var(--dt-foreground) 2%, transparent) !important;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 62%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 52%, transparent)) !important;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 12%, transparent) inset, 0 18px 52px color-mix(in srgb, var(--dt-background, var(--background)) 48%, transparent), 0 0 0 1px color-mix(in srgb, var(--dt-foreground) 3%, transparent) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 48%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 34%, transparent)) !important;
   color: var(--dt-foreground, var(--foreground)) !important;
   backdrop-filter: blur(18px) saturate(112%);
 }
@@ -147,7 +161,7 @@ const COMPACT_LAYOUT_CSS = `
   caret-color: var(--dt-ring, var(--ring, currentColor));
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-rich-input"] {
-  min-height: 1.875rem !important;
+  min-height: 1.5rem !important;
   font-size: 0.75rem !important;
   line-height: 1.4 !important;
 }
@@ -158,8 +172,13 @@ const COMPACT_LAYOUT_CSS = `
   margin-inline: auto !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(p, div) {
-  padding-block: 0.625rem;
+  padding-block: 0.4375rem;
   border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 38%, transparent);
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(section, article, [data-message-id]) {
+  padding-block: 0.4375rem !important;
+  margin-block: 0 !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 44%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-viewport"] {
   scrollbar-width: thin;
@@ -171,6 +190,15 @@ const COMPACT_LAYOUT_CSS = `
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] aside {
   font-size: 0.6875rem;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] > :where(h2, h3, h4, p) {
+  margin-block: 0.375rem !important;
+  line-height: 1.28 !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] > :where(div, section, article) {
+  min-height: 2.5rem;
+  padding-block: 0.375rem !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 44%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] :where([role="treeitem"], [role="option"]) {
   min-height: 1.5rem !important;
