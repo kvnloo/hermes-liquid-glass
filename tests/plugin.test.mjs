@@ -105,6 +105,8 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
   assert.match(ruleFor(`${rootPrefix}[data-slot="sidebar-wrapper"] [class*="h-[34px]"]`)?.declarations || '', /background:\s*var\(--o8-glass-sidebar\)\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="composer-surface"]`)?.declarations || '', /color:\s*var\(--dt-foreground,\s*var\(--foreground\)\)\s*!important/)
   assert.match(ruleFor(`${rootPrefix}[data-slot="aui_thread-content"]`)?.declarations || '', /max-width:\s*58rem\s*!important/)
+  assert.match(ruleFor(`${rootPrefix}[data-slot="aui_thread-content"]`)?.declarations || '', /padding-bottom:\s*7\.5rem\s*!important/,
+    'the final transcript beat needs explicit clearance above the composer')
   assert.match(ruleFor(`${rootPrefix}[data-slot="sidebar-group-label"]`)?.declarations || '', /font-size:\s*0\.625rem\s*!important/)
   assert.match(ruleFor(`${rootPrefix}:has(> [data-tree-group="grp-sessions"])`)?.declarations || '', /backdrop-filter:\s*blur\(32px\) saturate\(126%\)/)
   assert.match(ruleFor(`${rootPrefix}:has(> [data-tree-group="grp-sessions"])`)?.declarations || '', /var\(--o8-glass-sidebar\)/)
@@ -124,7 +126,11 @@ test('compact variant is opt-in, persists state, and cleans up its style', async
     'conversation copy must retain a readable primary tier')
   assert.doesNotMatch(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\)\s*\{/,
     'review styling must not flatten every direct container')
-  assert.match(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\):not\(:has\(> :where\(div, section, article\)\)\)\s*\{[^}]*min-height:\s*2\.5rem[^}]*border-bottom:/)
+  assert.match(style.textContent, /\[data-tree-group="grp-review"\] > :where\(div, section, article\):not\(:has\(> :where\(div, section, article\)\)\)\s*\{[^}]*min-height:\s*2\.5rem[^}]*border:\s*1px solid color-mix/)
+  assert.match(style.textContent, /:where\(button, \[role="button"\]\):active:not\(:disabled\):not\(\[aria-disabled="true"\]\)/)
+  assert.match(style.textContent, /:where\(button:disabled, \[aria-disabled="true"\], \[data-disabled\]\)/)
+  assert.match(style.textContent, /:where\(\[aria-invalid="true"\], \[data-state="error"\], \[data-status="error"\]\)/)
+  assert.match(style.textContent, /--o8-motion:\s*180ms cubic-bezier\(0\.32, 0\.72, 0, 1\)/)
   assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-sessions[\s\S]*width:\s*12rem\s*!important/)
   assert.match(style.textContent, /@media \(max-width: 719px\)[\s\S]*grp-review[\s\S]*display:\s*none\s*!important/)
   assert.match(style.textContent, /:where\(input, textarea, select, \[contenteditable="true"\]\):focus-visible/)

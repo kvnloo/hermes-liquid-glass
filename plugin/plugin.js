@@ -41,6 +41,9 @@ const COMPACT_LAYOUT_CSS = `
   --composer-surface-pad-x: 0.625rem;
   --composer-surface-pad-y: 0.3125rem;
   --composer-row-gap: 0.25rem;
+  --o8-motion: 180ms cubic-bezier(0.32, 0.72, 0, 1);
+  --o8-rim: color-mix(in srgb, var(--dt-foreground) 9%, transparent);
+  --o8-rim-soft: color-mix(in srgb, var(--dt-foreground) 4%, transparent);
   --o8-glass-sidebar: linear-gradient(135deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 92%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 88%, transparent));
   --o8-glass-center: radial-gradient(ellipse at 52% 38%, color-mix(in srgb, var(--dt-background, var(--background)) 94%, transparent), color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 90%, transparent) 64%, transparent 118%);
   --o8-glass-review: linear-gradient(225deg, color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 94%, transparent), color-mix(in srgb, var(--dt-background, var(--background)) 90%, transparent));
@@ -52,6 +55,15 @@ const COMPACT_LAYOUT_CSS = `
   letter-spacing: -0.008em;
   color: var(--dt-foreground, var(--foreground)) !important;
   background: transparent !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  border: 1px solid var(--o8-rim);
+  box-shadow: 0 1px 0 var(--o8-rim-soft) inset, 0 -1px 0 color-mix(in srgb, var(--dt-background, var(--background)) 42%, transparent) inset;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="sidebar-wrapper"] [class*="h-[34px]"] {
   background: var(--o8-glass-sidebar) !important;
@@ -103,7 +115,13 @@ const COMPACT_LAYOUT_CSS = `
   padding-block: 0.4375rem !important;
   border-bottom-color: color-mix(in srgb, var(--dt-border) 72%, transparent) !important;
   background: color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 24%, transparent) !important;
+  box-shadow: 0 1px 0 var(--o8-rim-soft) inset, 0 10px 28px color-mix(in srgb, var(--dt-background, var(--background)) 18%, transparent);
   backdrop-filter: blur(30px) saturate(124%);
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(:has(> [data-tree-group="grp-sessions"]), :has(> [data-slot="aui_thread-content"]), :has(> [data-tree-group="grp-review"])) > header :where(button, [role="button"]) {
+  min-width: 1.625rem;
+  min-height: 1.625rem;
+  border: 1px solid transparent;
 }
 @media (max-width: 1040px) {
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
@@ -148,16 +166,24 @@ const COMPACT_LAYOUT_CSS = `
   height: 1.625rem;
   border-radius: var(--o8-compact-radius) !important;
   border: 1px solid transparent;
+  overflow: hidden;
+  transition: background-color var(--o8-motion), border-color var(--o8-motion), box-shadow var(--o8-motion), transform var(--o8-motion);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="row-button"] {
   padding: 0.1875rem 0.375rem !important;
   gap: 0.375rem !important;
   font-size: 0.75rem !important;
   font-weight: 450;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-root"] {
   padding-inline: clamp(1rem, 1.5vw, 1.5rem) !important;
   padding-bottom: clamp(0.75rem, 1.2vw, 1.25rem) !important;
+  position: relative;
+  z-index: 2;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-surface"] {
   min-height: 5.25rem !important;
@@ -167,6 +193,11 @@ const COMPACT_LAYOUT_CSS = `
   background: var(--o8-glass-elevated) !important;
   color: var(--dt-foreground, var(--foreground)) !important;
   backdrop-filter: blur(18px) saturate(112%);
+  transition: border-color var(--o8-motion), box-shadow var(--o8-motion), transform var(--o8-motion);
+}
+:root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-surface"] :where(button, [role="button"]) {
+  min-width: 1.75rem;
+  min-height: 1.75rem;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="composer-surface"] :where(input, textarea, [contenteditable="true"]) {
   color: inherit !important;
@@ -182,6 +213,7 @@ const COMPACT_LAYOUT_CSS = `
   max-width: 58rem !important;
   padding-inline: 1.25rem !important;
   margin-inline: auto !important;
+  padding-bottom: 7.5rem !important;
 }
 @media (max-width: 719px) {
   :root[data-hermes-liquid-glass-layout="compact"] :has(> [data-tree-group="grp-sessions"]) {
@@ -201,7 +233,7 @@ const COMPACT_LAYOUT_CSS = `
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(p, div) {
   padding-block: 0.4375rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 38%, transparent);
+  margin-block: 0.125rem;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(section, article, [data-message-id]) {
   padding: 0.625rem 0.75rem !important;
@@ -212,6 +244,7 @@ const COMPACT_LAYOUT_CSS = `
   box-shadow: 0 1px 0 color-mix(in srgb, var(--dt-foreground) 5%, transparent) inset;
   font-size: 0.875rem;
   line-height: 1.48;
+  transition: background-color var(--o8-motion), border-color var(--o8-motion), transform var(--o8-motion);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="aui_thread-content"] > :where(section, article, [data-message-id]):nth-child(even) {
   margin-left: clamp(0.5rem, 2vw, 1.5rem) !important;
@@ -229,14 +262,24 @@ const COMPACT_LAYOUT_CSS = `
 :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] aside {
   font-size: 0.6875rem;
 }
+:root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] > :where(h2, h3, h4) {
+  font-size: 0.625rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--dt-foreground) 58%, transparent) !important;
+}
 :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] > :where(h2, h3, h4, p) {
   margin-block: 0.375rem !important;
   line-height: 1.28 !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] > :where(div, section, article):not(:has(> :where(div, section, article))) {
   min-height: 2.5rem;
-  padding-block: 0.375rem !important;
-  border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 44%, transparent);
+  padding: 0.375rem 0.4375rem !important;
+  margin-block: 0.1875rem;
+  border: 1px solid color-mix(in srgb, var(--dt-border) 34%, transparent);
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--dt-card, var(--card, var(--dt-background, var(--background)))) 16%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] [data-tree-group="grp-review"] :where([role="treeitem"], [role="option"]) {
   min-height: 1.5rem !important;
@@ -244,6 +287,20 @@ const COMPACT_LAYOUT_CSS = `
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, input, textarea, select) {
   border-radius: var(--o8-compact-radius) !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(button, [role="button"], a) {
+  transition: background-color var(--o8-motion), border-color var(--o8-motion), color var(--o8-motion), opacity var(--o8-motion), transform var(--o8-motion);
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(button, [role="button"]):active:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(1px) scale(0.985);
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(button:disabled, [aria-disabled="true"], [data-disabled]) {
+  opacity: 0.42 !important;
+  cursor: not-allowed !important;
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where([aria-invalid="true"], [data-state="error"], [data-status="error"]) {
+  border-color: color-mix(in srgb, var(--dt-destructive, var(--destructive, var(--dt-primary))) 58%, transparent) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--dt-destructive, var(--destructive, var(--dt-primary))) 14%, transparent) !important;
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, a) svg {
   width: 0.8125rem;
@@ -256,6 +313,10 @@ const COMPACT_LAYOUT_CSS = `
 :root[data-hermes-liquid-glass-layout="compact"] [data-slot="context-menu-trigger"]:has(> [data-slot="row-button"]):hover {
   background: color-mix(in srgb, var(--dt-foreground) 5%, transparent) !important;
   border-color: color-mix(in srgb, var(--dt-border) 55%, transparent);
+}
+:root[data-hermes-liquid-glass-layout="compact"] :where(button, [role="button"]):hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: color-mix(in srgb, var(--dt-foreground) 6%, transparent);
+  border-color: color-mix(in srgb, var(--dt-border) 48%, transparent);
 }
 :root[data-hermes-liquid-glass-layout="compact"] :where(button, [role="button"]):focus-visible,
 :root[data-hermes-liquid-glass-layout="compact"] :where(input, textarea, select, [contenteditable="true"]):focus-visible {
