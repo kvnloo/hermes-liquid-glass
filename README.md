@@ -11,17 +11,16 @@ When the wallpaper changes, Desktop accent/chrome follow automatically.
 ## Quick install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kvnloo/hermes-liquid-glass/main/scripts/install.sh | bash
+hermes plugins install kvnloo/hermes-liquid-glass
 ```
 
 Then in Hermes Desktop:
 
-1. **Cmd/Ctrl+K → Reload desktop plugins**
-2. **Settings → Plugins** → enable `liquid-glass-wal` if needed
-3. **Cmd/Ctrl+K → Liquid Glass: sync from pywal now**
+1. **Settings → Plugins** → enable `liquid-glass-wal` (it ships disabled)
+2. **Cmd/Ctrl+K → Liquid Glass: choose pywal folder** → pick `~/.cache/wal` (asked once; revoke under Capabilities → Plugins → Folder access)
+3. Run `scripts/apply.sh` after `wal` (or wire it into your wallpaper hook)
 
-Clone path defaults to `~/.local/share/hermes-liquid-glass`.  
-Override with `HERMES_LIQUID_GLASS_HOME=/somewhere`.
+The theme appears in the picker as **Liquid Glass (pywal)** (`liquid-glass`). Wallpaper changes repaint it live.
 
 ## What you get
 
@@ -83,15 +82,24 @@ If you use [kvnloo/.files](https://github.com/kvnloo/.files), this is already ho
 2. Emits a Hermes `DesktopTheme` (+ glass mix knobs) to:
    - `~/.cache/wal/hermes-liquid-glass-theme.json`
    - `~/.hermes/liquid-glass-wal/theme.json`
-3. Runtime plugin polls the file, installs skin `liquid-glass-wal`, paints CSS seeds **without** full-window reload
+3. The Desktop plugin reads `hermes-liquid-glass-theme.json` from the folder you granted (through `ctx.files`) every 4 s and contributes it to the theme registry. A changed file re-registers the theme, and the app repaints it live without a reload. With auto-apply on, a wallpaper change also selects it (`requestTheme`). Glass mix knobs ride along as the theme's `customCSS`, and only plain percentages pass.
 4. Hyprland `opacity` + `blur:ignore_opacity` provide frost see-through
 
 ## Palette commands
 
 | Command | Action |
 |---------|--------|
-| Liquid Glass: sync from pywal now | Force rebuild apply + one reload |
+| Liquid Glass: choose pywal folder | Grant the plugin read access to `~/.cache/wal` (once) |
+| Liquid Glass: sync from pywal now | Re-read the theme file and select it |
 | Liquid Glass: toggle auto-apply… | Enable/disable wallpaper auto-theme |
+
+## What it touches
+
+- **Desktop plugin**: reads one file, `hermes-liquid-glass-theme.json`, from the folder you grant, through `ctx.files`. It saves one setting (auto-apply) in `ctx.storage`. It doesn't write app state, call the native bridge, use the network or touch credentials.
+- **Python half**: inert (`register()` adds nothing).
+- **Scripts** (only if you run them): `build_theme.py` writes `~/.cache/wal/hermes-liquid-glass-*.json` and `~/.hermes/liquid-glass-wal/theme.json`. `install.sh` symlinks `plugin/` into `$HERMES_HOME/desktop-plugins/`.
+
+Upgrading from 1.x: the theme is now named `liquid-glass`. Pick it once in the theme picker, and delete the stale `liquid-glass-wal` user theme if it's still listed.
 
 ## Distribution / “store”
 
@@ -112,6 +120,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ```bash
 node --check plugin/plugin.js
+node --test tests/
 ./scripts/apply.sh
 # Reload desktop plugins in Hermes
 ```

@@ -3,7 +3,6 @@
 #
 # Usage:
 #   ./scripts/install.sh
-#   curl -fsSL https://raw.githubusercontent.com/kvnloo/hermes-liquid-glass/main/scripts/install.sh | bash
 #
 # Env:
 #   HERMES_LIQUID_GLASS_HOME  Install/clone dir (default: ~/.local/share/hermes-liquid-glass)

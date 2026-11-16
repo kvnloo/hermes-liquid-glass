@@ -15,7 +15,7 @@ plugin that auto-recolors chrome when the wallpaper changes.
 Repo: https://github.com/kvnloo/hermes-liquid-glass
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kvnloo/hermes-liquid-glass/main/scripts/install.sh | bash
+hermes plugins install kvnloo/hermes-liquid-glass
 ```
 
 Then: Cmd/Ctrl+K → **Reload desktop plugins** → **Liquid Glass: sync from pywal now**.

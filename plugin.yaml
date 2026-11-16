@@ -1,6 +1,8 @@
 name: liquid-glass-wal
-version: 1.0.0
+version: 2.0.0
 description: "Linux-native pywal and Hyprland liquid glass theme for Hermes Desktop. The Python half is intentionally inert; the opt-in Desktop plugin lives in desktop/plugin.js."
 author: kvnloo
 hooks: []
 provides: {}
+license: MIT
+homepage: https://github.com/kvnloo/hermes-liquid-glass

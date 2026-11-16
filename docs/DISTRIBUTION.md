@@ -23,11 +23,11 @@ https://hermes-agent.nousresearch.com/docs/developer-guide/desktop-plugin-sdk
 ### One-liner
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kvnloo/hermes-liquid-glass/main/scripts/install.sh | bash
+hermes plugins install kvnloo/hermes-liquid-glass
 ```
 
 Default clone path: `~/.local/share/hermes-liquid-glass`  
-Override: `HERMES_LIQUID_GLASS_HOME=/path curl … | bash`
+Manual: `git clone https://github.com/kvnloo/hermes-liquid-glass && ./hermes-liquid-glass/scripts/install.sh` (`HERMES_LIQUID_GLASS_HOME=/path` to choose the clone dir)
 
 ### From a checkout
 
